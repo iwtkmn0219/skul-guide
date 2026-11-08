@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>스컬별 스킬 추천</title>
+  <meta name="description" content="스컬: 더 히어로 슬레이어 스컬 45종의 추천 스킬 조합을 등급별로 검색하고 필터링하는 정리 페이지">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="site">
+    <h1>스컬별 스킬 추천</h1>
+    <p class="source" id="source"></p>
+    <p class="headline" id="headline"></p>
+  </header>
+
+  <nav class="controls" aria-label="필터">
+    <div class="tabs" role="group" aria-label="등급">
+      <button type="button" data-grade="all">전체</button>
+    </div>
+    <div class="row">
+      <select id="mark" aria-label="원문 표기">
+        <option value="all">원문 표기: 전체</option>
+        <option value="★">★</option>
+        <option value="◆">◆</option>
+      </select>
+      <input id="q" type="search" placeholder="스컬 또는 스킬 이름 검색" aria-label="검색" autocomplete="off">
+      <span id="count" aria-live="polite"></span>
+    </div>
+  </nav>
+
+  <main id="list"></main>
+
+  <footer class="site">
+    비공식 팬 정리 페이지입니다. 내용 출처는 위 원문이며, Skul: The Hero Slayer 관련 권리는 SouthPAW Games에 있습니다.
+  </footer>
+</body>
+</html>

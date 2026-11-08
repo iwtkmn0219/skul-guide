@@ -1,0 +1,152 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --text: #1f1d1a;
+  --muted: #6b665e;
+  --border: #dedad2;
+  --accent: #8a5a1f;
+  --badge-bg: #efe9de;
+  --common: #8d8d8d;
+  --rare: #3f7fd1;
+  --unique: #9a4fd0;
+  --legendary: #d9932b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17161a;
+    --surface: #222127;
+    --text: #ece9e3;
+    --muted: #a39e95;
+    --border: #393740;
+    --accent: #e0aa5c;
+    --badge-bg: #34313a;
+    --common: #a3a3a3;
+    --rare: #6ea6f0;
+    --unique: #c08cf0;
+    --legendary: #f0b552;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+a { color: var(--accent); }
+
+header.site, nav.controls, main, footer.site {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+header.site { padding-top: 24px; }
+header.site h1 { margin: 0 0 4px; font-size: 1.6rem; }
+.source { margin: 0; color: var(--muted); font-size: .9rem; }
+.headline { margin: 8px 0 0; font-weight: 600; }
+
+nav.controls {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.tabs button {
+  font: inherit;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.tabs button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.row select, .row input {
+  font: inherit;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  min-width: 0;
+}
+.row input { flex: 1 1 180px; }
+#count { color: var(--muted); font-size: .9rem; }
+
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  gap: 12px;
+  padding-top: 16px;
+  padding-bottom: 24px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--common);
+  border-radius: 8px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+.grade-common { border-left-color: var(--common); }
+.grade-rare { border-left-color: var(--rare); }
+.grade-unique { border-left-color: var(--unique); }
+.grade-legendary { border-left-color: var(--legendary); }
+
+.portrait { float: right; width: 64px; height: 64px; object-fit: contain; margin: 0 0 6px 8px; }
+
+.card header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+.card h2 { margin: 0; font-size: 1.15rem; }
+.no { color: var(--muted); font-size: .85rem; }
+.no::after { content: "."; }
+.grade { margin-left: auto; color: var(--muted); font-size: .8rem; }
+
+.mark, .fixed, .label {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--badge-bg);
+  font-size: .75rem;
+  line-height: 1.6;
+  vertical-align: middle;
+}
+.mark { color: var(--accent); }
+.fixed { margin-left: 4px; color: var(--muted); }
+.label { margin-bottom: 4px; font-weight: 600; }
+
+.builds { list-style: none; margin: 0; padding: 0; }
+.builds > li + li { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+.combo { font-weight: 600; }
+.opt { white-space: nowrap; }
+
+.notes { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
+
+.pool { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.pool th, .pool td { padding: 4px 6px; border-bottom: 1px solid var(--border); text-align: left; }
+.pool th { color: var(--muted); font-weight: 500; }
+.pool .stars { color: var(--accent); white-space: nowrap; }
+
+.no-build { margin: 0; color: var(--muted); }
+.empty { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 32px 0; }
+
+footer.site { padding-bottom: 32px; color: var(--muted); font-size: .8rem; }
