@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SKULLS } from '../public/js/data.js';
-import { escapeHtml, renderCard, renderList } from '../public/js/render.js';
+import { SKILL_INFO } from '../public/js/skills.js';
+import { escapeHtml, renderCard, renderList, renderSkillSection, defaultStageIndex } from '../public/js/render.js';
 
 const byId = Object.fromEntries(SKULLS.map(s => [s.id, s]));
 
@@ -45,4 +46,38 @@ test('mark and anchor id', () => {
 });
 test('empty list message', () => {
   assert.ok(renderList([]).includes('검색 결과가 없습니다.'));
+});
+
+test('skill chips highlight recommendations; default stage tab is the last regular stage', () => {
+  const html = renderCard(byId.werewolf);
+  assert.ok(html.includes('<li class="chip rec" title="추천">사냥</li>'));
+  assert.ok(html.includes('role="tab" data-stage="3" aria-selected="true"'));
+  assert.ok(html.includes('data-stage="0" role="tabpanel" hidden'));
+});
+test('chips use namu spelling with alias highlighting (노예)', () => {
+  const html = renderCard(byId.spartan);
+  assert.ok(html.includes('<li class="chip rec" title="추천">심장 추적</li>'));
+  assert.ok(html.includes('<li class="chip">가르기</li>'));
+});
+test('special form gets its own tab after regular stages (버서커)', () => {
+  assert.ok(renderCard(byId.berserker).includes('>데빌</button>'));
+  assert.equal(defaultStageIndex(SKILL_INFO['버서커'].stages), 1);
+});
+test('variants render as extra rows (그림리퍼)', () => {
+  assert.ok(renderCard(byId['grim-reaper']).includes('class="variant"'));
+});
+test('skull without guide builds still shows skill chips (리틀본)', () => {
+  const html = renderCard(byId.skul);
+  assert.ok(html.includes('별도 추천 없음'));
+  assert.ok(html.includes('class="skill-chips"'));
+});
+test('namu text is escaped', () => {
+  const info = { stages: [{ label: '기본', form: null, kind: 'stage', passive: ['( ↓ + X ) <a&b>'], swap: null, skills: [] }] };
+  assert.ok(renderSkillSection(byId.werewolf, info).includes('( ↓ + X ) &lt;a&amp;b&gt;'));
+});
+test('no skill info renders nothing', () => {
+  assert.equal(renderSkillSection(byId.werewolf, undefined), '');
+});
+test('card carries namu license attribution', () => {
+  assert.ok(renderCard(byId.werewolf).includes('CC BY-NC-SA 2.0 KR'));
 });

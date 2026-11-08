@@ -35,3 +35,7 @@ test('grade and mark filters keep original order', () => {
   assert.equal(filterSkulls(SKULLS, { ...DEFAULT_STATE, mark: '★' }).length, 5);
   assert.deepEqual(filterSkulls(SKULLS, { ...DEFAULT_STATE, grade: 'legendary', mark: '◆' }).map(s => s.id), ['davy-jones', 'dominator']);
 });
+test('namu skill and swap names are searched', () => {
+  assert.deepEqual(q('환영교차'), ['ninja']);
+  assert.ok(q('야생의 질주').includes('werewolf'));
+});
