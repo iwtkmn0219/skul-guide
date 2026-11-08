@@ -1,0 +1,30 @@
+/** @typedef {import('./data.js').Skull} Skull */
+/** @typedef {import('./state.js').FilterState} FilterState */
+
+/** 검색 비교용: 소문자로 바꾸고 공백·`-`·`·`을 지운다. */
+export function normalize(text) {
+  return text.toLowerCase().replace(/[\s\-·]/g, '');
+}
+
+function searchTargets(skull) {
+  return [
+    skull.name,
+    ...skull.builds.flatMap(b => b.slots.flat()),
+    ...(skull.pool ?? []).flatMap(g => g.skills.map(k => k.name)),
+  ];
+}
+
+/** 이름·빌드 선택지·풀 스킬 이름에서 문자 그대로 찾는다(정규식 미사용). notes는 검색하지 않는다. */
+export function matchesQuery(skull, query) {
+  const q = normalize(query);
+  if (!q) return true;
+  return searchTargets(skull).some(t => normalize(t).includes(q));
+}
+
+/** @param {Skull[]} skulls @param {FilterState} state @returns {Skull[]} */
+export function filterSkulls(skulls, state) {
+  return skulls.filter(s =>
+    (state.grade === 'all' || s.grade === state.grade) &&
+    (state.mark === 'all' || s.mark === state.mark) &&
+    matchesQuery(s, state.query));
+}
