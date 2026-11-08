@@ -143,7 +143,8 @@ class _Section:
         elif texts and texts[0] == '패시브':
             self.stage['passive'] = [line for line in cells[-1]['lines'] if line != '-']
         elif texts and texts[0] == '교대':
-            self.stage['swap'] = {'name': texts[1], 'effect': cells[-1]['lines']}
+            if texts[1] not in ('', '-'):  # `교대 | - | - | -`는 교대 스킬 없음(야차 나찰)
+                self.stage['swap'] = {'name': texts[1], 'effect': cells[-1]['lines']}
         elif texts and texts[0] == '스킬' and len(cells) == 4:
             self._add_skill(*cells[1:])
             self.skill_rows_left = cells[0]['rowspan'] - 1

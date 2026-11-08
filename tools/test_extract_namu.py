@@ -113,6 +113,12 @@ class ExtractTest(unittest.TestCase):
         plain = parse('<h3>3.5. 웨어울프[편집]</h3>' + stage_table(FOUR))['웨어울프']['stages'][0]
         self.assertEqual(plain['cooldownLabel'], '쿨타임')
 
+    def test_placeholder_swap_dropped(self):
+        # 야차의 나찰 형태: `교대 | - | - | -` 행은 교대 스킬이 없다는 뜻이다.
+        html = ('<h3>6.3. 야차[편집]</h3>'
+                + table(HEADER, row('교대', '-', '-', '-'), row(('스킬', 1), 'A', '1초', 'a')))
+        self.assertIsNone(parse(html)['야차']['stages'][0]['swap'])
+
     def test_marks_stripped(self):
         html = '<h3>3.12. 노예 ★[편집]</h3>' + stage_table(FOUR) + '<h3>3.9. 돌원숭 ◆[편집]</h3>' + stage_table(FOUR)
         self.assertEqual(sorted(parse(html)), ['노예', '돌원숭'])
