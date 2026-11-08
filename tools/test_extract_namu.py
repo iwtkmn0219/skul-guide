@@ -55,6 +55,14 @@ class ExtractTest(unittest.TestCase):
         stages = parse(html)['노예']['stages']
         self.assertEqual([len(s['skills']) for s in stages], [4, 4])
 
+    def test_oversized_skill_rowspan_stops_at_type_row(self):
+        # 좀도둑: 원문 마크업의 `스킬` rowspan이 5인데 스킬은 4개이고 바로 뒤에 타입 행이 온다.
+        html = ('<h3>3.7. 좀도둑[편집]</h3>' + table(row('노말 : 좀도둑'))
+                + table(HEADER, row(('스킬', 5), 'A', '1초', 'a'), row('B', '1초', 'b'), row('C', '1초', 'c'), row('D', '1초', 'd'),
+                        row('타입', '기본 공격', '대쉬 공격'), row('스피드', '물리데미지', '없음')))
+        skills = parse(html)['좀도둑']['stages'][0]['skills']
+        self.assertEqual([k['name'] for k in skills], ['A', 'B', 'C', 'D'])
+
     def test_skill_rows_and_br(self):
         html = ('<h3>5.8. 죄수[편집]</h3>' + table(row('유니크 : 죄수'))
                 + table(HEADER, row(('스킬', 1), '이중 자동 쇠뇌Ⅱ~Ⅵ<a href="#fn-75">[75]</a>', '12초<br>(충전)', 'A<br>B[75]')))
@@ -94,6 +102,16 @@ class ExtractTest(unittest.TestCase):
         self.assertEqual(len(stages), 1)
         self.assertEqual(stages[0]['label'], '기본')
         self.assertEqual([k['name'] for k in stages[0]['skills']], ['두개골 투척', '머리가 본체'])
+
+    def test_cost_header_variant(self):
+        html = ('<h3>6.2. 챔피언[편집]</h3>' + table(row('레전더리 : 챔피언'))
+                + table(row(('스킬', 1), '필요 기력', '효과'), row(('스킬', 2), '순보', '25', 'a'), row('콤비네이션', '50', 'b')))
+        stages = parse(html)['챔피언']['stages']
+        self.assertEqual(len(stages), 1)
+        self.assertEqual(stages[0]['cooldownLabel'], '필요 기력')
+        self.assertEqual([k['cooldown'] for k in stages[0]['skills']], ['25', '50'])
+        plain = parse('<h3>3.5. 웨어울프[편집]</h3>' + stage_table(FOUR))['웨어울프']['stages'][0]
+        self.assertEqual(plain['cooldownLabel'], '쿨타임')
 
     def test_marks_stripped(self):
         html = '<h3>3.12. 노예 ★[편집]</h3>' + stage_table(FOUR) + '<h3>3.9. 돌원숭 ◆[편집]</h3>' + stage_table(FOUR)

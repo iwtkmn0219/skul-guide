@@ -22,7 +22,7 @@ HEADING_RE = re.compile(r'^(\d+(?:\.\d+)*)\.\s*(.+)$')
 STAGE_RE = re.compile(r'^(노말|레어|유니크|레전더리) : (.+)$')
 PAIR_RE = re.compile(r'^(.+) : (.+)$')
 FOOTNOTE_RE = re.compile(r'\[\d+\]')
-HEADER = ['스킬', '쿨타임', '효과']
+STOP_ROWS = {'타입', '장점', '단점'}
 
 
 def clean_lines(raw):
@@ -95,7 +95,7 @@ class _Section:
         self.variants_left = 0
         self.skill_rows_left = 0  # `스킬` 라벨 칸의 rowspan이 덮는 남은 행 수
 
-    def _open_stage(self):
+    def _open_stage(self, cooldown_label):
         i = self.headers_seen
         self.headers_seen += 1
         if i < len(self.stage_names):
@@ -105,7 +105,8 @@ class _Section:
             label, form, kind = '기본', None, 'stage'
         else:
             label, form, kind = self.last_pair, None, 'form'
-        self.stage = {'label': label, 'form': form, 'kind': kind, 'passive': [], 'swap': None, 'skills': []}
+        self.stage = {'label': label, 'form': form, 'kind': kind, 'cooldownLabel': cooldown_label,
+                      'passive': [], 'swap': None, 'skills': []}
         self.stages.append(self.stage)
         self.last_skill = None
         self.variants_left = 0
@@ -125,10 +126,13 @@ class _Section:
             return
         if len(cells) == 1 and PAIR_RE.match(texts[0]):
             self.last_pair = PAIR_RE.match(texts[0]).group(2)
-        if texts == HEADER:
-            self._open_stage()
+        if len(texts) == 3 and texts[0] == '스킬' and texts[2] == '효과':  # 가운데 칸: 쿨타임, 챔피언은 필요 기력
+            self._open_stage(texts[1])
             return
         if self.stage is None:
+            return
+        if texts and texts[0] in STOP_ROWS:  # rowspan이 실제보다 큰 표(좀도둑 등)에서도 여기서 끝낸다
+            self.stage = None
             return
         in_skill_block = self.skill_rows_left > 0
         self.skill_rows_left = max(self.skill_rows_left - 1, 0)
