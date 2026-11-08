@@ -11,6 +11,9 @@
   --rare: #3f7fd1;
   --unique: #9a4fd0;
   --legendary: #d9932b;
+  --rec-bg: #f6e3c4;
+  --rec-text: #6a420f;
+  --rec-row: #fbf1e1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +29,9 @@
     --rare: #6ea6f0;
     --unique: #c08cf0;
     --legendary: #f0b552;
+    --rec-bg: #5a4220;
+    --rec-text: #ffd89a;
+    --rec-row: #33291c;
   }
 }
 
@@ -150,3 +156,43 @@ main {
 .empty { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 32px 0; }
 
 footer.site { padding-bottom: 32px; color: var(--muted); font-size: .8rem; }
+footer.site p { margin: 0 0 6px; }
+
+/* 나무위키 스킬 정보 */
+.skill-chips { display: flex; flex-wrap: wrap; gap: 4px; list-style: none; margin: 10px 0 0; padding: 0; }
+.chip {
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--badge-bg);
+  font-size: .78rem;
+  line-height: 1.6;
+}
+.chip.rec { border-color: transparent; background: var(--rec-bg); color: var(--rec-text); font-weight: 700; }
+.chip.rec::before { content: "★ "; }
+
+.skill-detail { margin-top: 8px; font-size: .85rem; }
+.skill-detail summary { cursor: pointer; color: var(--accent); }
+.stage-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; }
+.stage-tabs button {
+  font: inherit;
+  font-size: .78rem;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.stage-tabs [aria-selected="true"] { border-color: var(--accent); color: var(--text); font-weight: 700; box-shadow: inset 0 -2px 0 var(--accent); }
+.stage-scroll { overflow-x: auto; }
+.stage p { margin: 0 0 6px; }
+.skill-table { width: 100%; min-width: 300px; border-collapse: collapse; }
+.skill-table th, .skill-table td { padding: 4px 6px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.skill-table th { color: var(--muted); font-weight: 500; }
+.skill-table td:first-child, .skill-table td:nth-child(2) { white-space: nowrap; }
+.skill-table tr.rec td { background: var(--rec-row); }
+.skill-table tr.rec td:first-child { font-weight: 700; color: var(--rec-text); }
+.skill-table .variant td { font-size: .78rem; color: var(--muted); }
+.skill-table .variant td:last-child { padding-left: 16px; }
+.attribution { margin: 6px 0 0; color: var(--muted); font-size: .75rem; }
