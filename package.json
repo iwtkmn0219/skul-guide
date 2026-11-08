@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "test:tools": "python -X utf8 -m unittest discover -s tools -p test_*.py"
   }
 }
