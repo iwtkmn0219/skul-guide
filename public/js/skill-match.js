@@ -27,7 +27,7 @@ export const ALIASES = {
   'davy-jones': { '백병전!': ['백병전을 준비하라!'] },
 };
 
-const ANY = '아무거나';
+export const ANY = '아무거나';
 
 /** 가이드 build 선택지(아무거나 제외), fixedSkill, 죄수 pool의 stars ≥ 1 스킬. */
 function recommendedNames(skull) {
