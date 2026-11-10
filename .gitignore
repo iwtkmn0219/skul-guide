@@ -4,3 +4,4 @@ public/skills/img/
 sources/
 __pycache__/
 .wrangler/
+~$*.xlsx
