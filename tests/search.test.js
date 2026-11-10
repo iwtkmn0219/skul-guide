@@ -50,7 +50,10 @@ test('chooseSelection', () => {
   assert.equal(chooseSelection({ ...base, entries: allK, reason: 'query' }), 'skull:recruit');
   assert.equal(chooseSelection({ ...base, entries: allK, reason: 'query', auto: false }), 'item:절대반지');
   assert.equal(chooseSelection({ ...base, entries: allK, reason: 'query', query: '  ' }), 'item:절대반지');
-  assert.equal(chooseSelection({ ...base, entries: [], reason: 'query' }), 'item:절대반지');
+  // 목록이 비면 언제나 선택을 비운다(기억은 app.js에서 유지)
+  assert.equal(chooseSelection({ ...base, entries: [], reason: 'query' }), '');
+  assert.equal(chooseSelection({ ...base, entries: [], reason: 'tab' }), '');
+  assert.equal(chooseSelection({ ...base, entries: [], reason: 'query', auto: false }), '');
   assert.equal(chooseSelection({ ...base, entries: itemsK, reason: 'tab', remembered: 'item:칼레온 계급장' }), 'item:칼레온 계급장');
   assert.equal(chooseSelection({ ...base, entries: itemsK, reason: 'tab' }), 'item:보급형 칼레온 갑옷');
   assert.equal(chooseSelection({ ...base, entries: itemsK, reason: 'tab', query: '' }), 'item:절대반지');

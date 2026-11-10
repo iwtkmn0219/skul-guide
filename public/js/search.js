@@ -84,9 +84,10 @@ export function tabSelection(entries, remembered) {
   return entries[0]?.key ?? '';
 }
 
-/** reason: 'query'(검색어가 바뀜) | 'tab'(탭이나 ★/◆가 바뀜) */
+/** reason: 'query'(검색어가 바뀜) | 'tab'(★/◆ 거르기가 바뀜. 탭 전환은 tabSelection을 쓴다). 목록이 비면 ''. */
 export function chooseSelection({ entries, query, remembered, reason, auto }) {
-  const pick = auto && normalize(query) !== '' && entries.length > 0
+  if (entries.length === 0) return '';
+  const pick = auto && normalize(query) !== ''
     && (reason === 'query' || !entries.some(e => e.key === remembered));
   return pick ? autoPick(entries, query) : remembered;
 }

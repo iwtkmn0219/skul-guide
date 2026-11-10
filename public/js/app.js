@@ -213,7 +213,7 @@ function onHistoryChange() {
   loadFromLocation();
 }
 
-/** 데스크톱에서 검색어·탭·거르기가 바뀌면 결과에 맞춰 고른다. 포커스는 옮기지 않는다. */
+/** 검색어나 ★/◆ 거르기가 바뀌면 결과에 맞춰 고른다. 목록이 비면 선택을 비운다. 다른 항목을 자동으로 고르는 것은 데스크톱에서만 한다. 포커스는 옮기지 않는다. */
 function autoSelect(reason) {
   const key = chooseSelection({
     entries: tabEntries(currentResults(), state.tab, state.mark),
@@ -327,6 +327,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && state.query) {
     e.preventDefault();
     update({ query: '' });
+    autoSelect('query');   // 결과가 없어 비었던 선택을 기억한 항목으로 되돌린다
   }
 });
 
