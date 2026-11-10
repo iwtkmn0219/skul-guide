@@ -743,7 +743,8 @@ test('fixed, any, pool, others, no-build', () => {
   const p = d('skull:prisoner');
   assert.ok(p.includes('<table class="pool">') && !p.includes('class="others"'));
   assert.ok(p.split('<tr>').find(r => r.includes('늑대 덫')).includes('★★'));
-  const sp = d('skull:spartan'); const others = sp.slice(sp.indexOf('class="others"'));
+  const sp = d('skull:spartan'); const start = sp.indexOf('class="others"');
+  const others = sp.slice(start, sp.indexOf('</p>', start));   // "그 외" 줄만. 뒤의 스킬 표에는 심장 추적이 있다
   assert.ok(others.includes('<span class="chip">가르기</span>') && !others.includes('심장 추적') && others.includes('그 외'));
   const sk = d('skull:skul');
   assert.ok(sk.includes('별도 추천 없음') && sk.includes('<span class="others-label">스킬</span>'));
