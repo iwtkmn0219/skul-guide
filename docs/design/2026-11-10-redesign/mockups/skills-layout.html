@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안: skills-layout</title>
+<link rel="stylesheet" href="frame.css">
+<script>function toggleSelect(el){el.classList.toggle("selected")}</script>
+</head>
+<body>
+<style>
+  @font-face { font-family: "Galmuri11"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri11"; font-weight: 700; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri14"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri14.woff2") format("woff2"); font-display: swap; }
+
+  .opt { margin: 0 0 28px; border: 2px solid transparent; border-radius: 12px; cursor: pointer; }
+  .opt.selected { border-color: var(--accent); }
+  .opt > h3 { margin: 10px 12px 4px; }
+  .opt > p.why { margin: 0 12px 10px; color: var(--text-secondary); font-size: .9rem; }
+
+  .lay { --panel: #1b0f2e; --frame: #8e6fd0; --text: #f4eeff; --muted: #c9b6ea; --acc: #ff8a4c;
+    padding: 0 20px 24px; border-radius: 10px; overflow: hidden; color: var(--text);
+    font-family: "Galmuri14", system-ui, sans-serif; font-size: 14px; line-height: 1.6; word-break: keep-all; text-align: left;
+    background-color: #24143a;
+    background-image: radial-gradient(30% 40% at 0% 0%, rgba(255,130,50,.28), transparent 70%), radial-gradient(30% 40% at 100% 0%, rgba(255,130,50,.28), transparent 70%), linear-gradient(rgba(10,4,20,.3), rgba(10,4,20,.7)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+  .lay .g11 { font-family: "Galmuri11", system-ui, sans-serif; }
+  .lay .frame { margin: 3px; box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame); }
+  .lay .bar { display: flex; align-items: center; gap: 16px; padding: 16px 0 14px; }
+  .lay .bar .title { font-family: "Galmuri11"; font-weight: 700; font-size: 22px; color: #f3ead6; text-shadow: 2px 2px 0 #000; white-space: nowrap; }
+  .lay .bar .search { flex: 1; display: flex; align-items: center; height: 38px; padding: 0 12px; background: #0e0619; color: var(--muted); font-family: "Galmuri11"; font-size: 11px; }
+  .lay .sec { display: flex; align-items: center; gap: 8px; margin: 6px 0 12px; font-family: "Galmuri11"; font-weight: 700; color: #d9d9d9; }
+  .lay .sec::before { content: ""; width: 8px; height: 8px; background: #a3a3a3; }
+  .lay .no { font-family: "Galmuri11"; font-size: 11px; color: var(--muted); }
+  .lay .pill { display: inline-block; margin: 2px; padding: 1px 8px; background: #3b2410; color: #ffd89a; font-family: "Galmuri11"; font-size: 11px; box-shadow: 0 -2px 0 0 #b07a2a, 0 2px 0 0 #b07a2a, -2px 0 0 0 #b07a2a, 2px 0 0 0 #b07a2a; white-space: nowrap; }
+  .lay .pill.any { background: none; color: var(--muted); box-shadow: 0 -2px 0 0 #5b4a78, 0 2px 0 0 #5b4a78, -2px 0 0 0 #5b4a78, 2px 0 0 0 #5b4a78; }
+  .lay .plus { margin: 0 4px; color: var(--muted); font-style: normal; font-family: "Galmuri11"; font-size: 11px; }
+  .lay .tag { display: inline-block; margin-right: 6px; padding: 0 5px; background: #4a3a66; color: #efe6ff; font-family: "Galmuri11"; font-size: 11px; }
+  .lay .none { color: var(--muted); }
+
+  /* A. 같은 크기 카드 */
+  .lay .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .lay .card-a { display: flex; flex-direction: column; gap: 6px; height: 150px; padding: 12px 14px; background: var(--panel); }
+  .lay .card-a .h { display: flex; align-items: baseline; gap: 6px; }
+  .lay .card-a .h b { font-family: "Galmuri11"; font-weight: 700; font-size: 16px; }
+  .lay .card-a .note1 { margin: 0; color: #e2d6f5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lay .card-a .meta { display: flex; justify-content: space-between; margin-top: auto; color: var(--muted); font-family: "Galmuri11"; font-size: 11px; }
+  .lay .card-a .meta .go { color: var(--acc); }
+
+  /* B. 목록 + 상세 */
+  .lay .split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; align-items: start; }
+  .lay .list { margin: 0; padding: 6px; list-style: none; background: var(--panel); }
+  .lay .list li { display: grid; grid-template-columns: 22px minmax(0, 9em) minmax(0, 1fr); align-items: center; gap: 8px; height: 44px; padding: 0 10px; border-bottom: 1px solid #2c1d45; }
+  .lay .list li b { font-family: "Galmuri11"; font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lay .list li .mini { color: #d8c9f0; font-family: "Galmuri11"; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lay .list li.on { background: #3a1f12; box-shadow: inset 3px 0 0 var(--acc); }
+  .lay .list li.on b { color: #ffd2b0; }
+  .lay .detail { padding: 16px 18px; background: var(--panel); }
+  .lay .detail h4 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-family: "Galmuri11"; font-weight: 700; font-size: 22px; }
+  .lay .detail h4 .gr { padding: 1px 6px; background: #a3a3a3; color: #141414; font-size: 11px; font-weight: 400; }
+  .lay .detail .build { padding: 10px 0; border-top: 1px dashed #4a3a66; }
+  .lay .detail ul { margin: 6px 0 0; padding-left: 18px; color: #e2d6f5; }
+  .lay .detail .btn { display: inline-block; margin-top: 12px; padding: 4px 12px; background: #2a1748; color: var(--acc); font-family: "Galmuri11"; font-size: 11px; box-shadow: 0 -2px 0 0 var(--acc), 0 2px 0 0 var(--acc), -2px 0 0 0 var(--acc), 2px 0 0 0 var(--acc); }
+  .lay .hint { margin: 8px 4px 0; color: var(--muted); font-family: "Galmuri11"; font-size: 11px; }
+</style>
+
+<h2>스킬 추천 페이지, 어느 배치가 더 정돈돼 보이나요?</h2>
+<p class="subtitle">지금은 한 줄에 놓인 카드들이 그 줄에서 가장 긴 카드에 높이를 맞춥니다. 그래서 웨어울프처럼 빌드가 둘인 카드 옆의 짧은 카드에 큰 빈칸이 생깁니다. 아래 두 배치를 고른 분위기(3번)로 만들었습니다. 내용은 실제 데이터입니다.</p>
+
+<div class="opt" data-choice="a" onclick="toggleSelect(this)">
+  <h3>A. 같은 크기 카드</h3>
+  <p class="why">모든 카드를 같은 높이로 맞추고, 대표 조합과 메모 첫 줄만 보여 줍니다. 나머지 빌드와 메모는 카드를 누르면 열립니다.</p>
+  <div class="lay">
+    <div class="bar"><span class="title">스컬별 스킬 추천</span><div class="search frame">스컬 또는 스킬 이름</div></div>
+    <div class="sec">일반 13</div>
+    <div class="grid">
+      <div class="card-a frame"><div class="h"><span class="no">1</span><b>스컬(리틀본)</b></div><div class="none">별도 추천 없음</div><div class="meta"><span></span><span class="go">자세히 ▸</span></div></div>
+      <div class="card-a frame"><div class="h"><span class="no">2</span><b>스켈레톤-검</b></div><div><span class="pill">녹슨 찌르기</span><i class="plus">+</i><span class="pill">톱날베기</span></div><p class="note1">이 두 스킬이 모션이 깔끔한 편</p><div class="meta"><span>메모 1</span><span class="go">자세히 ▸</span></div></div>
+      <div class="card-a frame"><div class="h"><span class="no">3</span><b>스켈레톤-창</b></div><div><span class="pill">돌격!</span><i class="plus">+</i><span class="pill any">아무거나</span></div><p class="note1">초반 추적템 나올 때 까지 견인해줄 돌격!만 챙겨주고</p><div class="meta"><span>메모 3</span><span class="go">자세히 ▸</span></div></div>
+      <div class="card-a frame"><div class="h"><span class="no">4</span><b>스켈레톤-방패</b></div><div><span class="pill">방패가속</span><i class="plus">+</i><span class="pill">방패찍기</span></div><p class="note1">방패치기는 성능은 나쁘지 않으나</p><div class="meta"><span>메모 4</span><span class="go">자세히 ▸</span></div></div>
+      <div class="card-a frame"><div class="h"><span class="no">5</span><b>웨어울프</b></div><div><span class="tag">물리</span><span class="pill">사냥</span><i class="plus">+</i><span class="pill">짐승의 도약</span></div><p class="note1">사냥은 증폭용으로 어떠한 경우든지 꼭 필요하고</p><div class="meta"><span>빌드 2 · 메모 6</span><span class="go">자세히 ▸</span></div></div>
+      <div class="card-a frame"><div class="h"><span class="no">6</span><b>칼레온 신병</b></div><div><span class="pill">궁병</span><i class="plus">+</i><span class="pill">중갑병</span></div><p class="note1">자폭으로 교대 돌려서 병사뽑는게 제일 중요한 스컬이라</p><div class="meta"><span>메모 3</span><span class="go">자세히 ▸</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="opt" data-choice="b" onclick="toggleSelect(this)">
+  <h3>B. 목록 + 상세 (게임 도감처럼)</h3>
+  <p class="why">왼쪽은 한 줄짜리 목록이라 줄 높이가 모두 같습니다. 고른 스컬의 빌드와 메모 전부를 오른쪽에 펼칩니다. 방향키로 목록을 오르내릴 수 있습니다. 휴대폰에서는 목록을 누르면 상세가 화면을 덮습니다.</p>
+  <div class="lay">
+    <div class="bar"><span class="title">스컬별 스킬 추천</span><div class="search frame">스컬 또는 스킬 이름</div></div>
+    <div class="sec">일반 13</div>
+    <div class="split">
+      <div>
+        <ul class="list frame">
+          <li><span class="no">1</span><b>스컬(리틀본)</b><span class="mini">추천 없음</span></li>
+          <li><span class="no">2</span><b>스켈레톤-검</b><span class="mini">녹슨 찌르기 + 톱날베기</span></li>
+          <li><span class="no">3</span><b>스켈레톤-창</b><span class="mini">돌격! + 아무거나</span></li>
+          <li><span class="no">4</span><b>스켈레톤-방패</b><span class="mini">방패가속 + 방패찍기</span></li>
+          <li class="on"><span class="no">5</span><b>웨어울프</b><span class="mini">사냥 + 짐승의 도약 · 빌드 2</span></li>
+          <li><span class="no">6</span><b>칼레온 신병</b><span class="mini">궁병 + 중갑병</span></li>
+        </ul>
+        <p class="hint">↑↓ 이동 · Enter 스킬 정보</p>
+      </div>
+      <div class="detail frame">
+        <h4>웨어울프 <span class="gr g11">일반</span></h4>
+        <div class="build">
+          <div><span class="tag">물리</span><span class="pill">사냥</span><i class="plus">+</i><span class="pill">짐승의 도약</span></div>
+          <ul><li>사냥은 증폭용으로 어떠한 경우든지 꼭 필요하고</li><li>짐승의 도약은 물리 스킬이 사냥 빼면 얘 뿐이라 울며 겨자먹기로 써야함</li><li>그래도 필드에선 도움이 되는 편이고 보스에선 무적 활용해서 딜하기 괜찮음</li></ul>
+        </div>
+        <div class="build">
+          <div><span class="tag">마딜</span><span class="pill">사냥</span><i class="plus">+</i><span class="pill">포식</span><i class="plus">/</i><span class="pill">찢기</span></div>
+          <ul><li>포식은 긴쿨 강한딜</li><li>찢기는 짧쿨 약한딜</li><li>거기서 거기니까 취향껏</li></ul>
+        </div>
+        <span class="btn">스킬 정보 ▸</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

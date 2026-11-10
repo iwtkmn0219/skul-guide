@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안: unified</title>
+<link rel="stylesheet" href="frame.css">
+<script>function toggleSelect(el){el.classList.toggle("selected")}</script>
+</head>
+<body>
+<style>
+  @font-face { font-family: "Galmuri11"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri11"; font-weight: 700; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri14"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri14.woff2") format("woff2"); font-display: swap; }
+
+  .u { --panel: #1b0f2e; --frame: #8e6fd0; --text: #f4eeff; --muted: #c9b6ea; --acc: #ff8a4c;
+    --common: #a3a3a3; --rare: #6ea6f0; --unique: #c08cf0; --legendary: #f0b552; --omen: #f08791;
+    padding: 0 20px 0; border-radius: 10px; overflow: hidden; color: var(--text);
+    font-family: "Galmuri14", system-ui, sans-serif; font-size: 14px; line-height: 1.6; word-break: keep-all; text-align: left;
+    background-color: #24143a;
+    background-image: radial-gradient(30% 30% at 0% 0%, rgba(255,130,50,.28), transparent 70%), radial-gradient(30% 30% at 100% 0%, rgba(255,130,50,.28), transparent 70%), linear-gradient(rgba(10,4,20,.3), rgba(10,4,20,.7)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+  .u .g11 { font-family: "Galmuri11", system-ui, sans-serif; font-size: 11px; }
+  .u .frame { margin: 3px; box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame); }
+  .u .px2 { box-shadow: 0 -2px 0 0 var(--c), 0 2px 0 0 var(--c), -2px 0 0 0 var(--c), 2px 0 0 0 var(--c); }
+
+  .u .bar { display: flex; align-items: center; gap: 16px; padding: 16px 0 12px; }
+  .u .title { display: flex; align-items: center; gap: 10px; font-family: "Galmuri11"; font-weight: 700; font-size: 22px; color: #f3ead6; text-shadow: 2px 2px 0 #000; white-space: nowrap; }
+  .u .torch { position: relative; flex: none; width: 9px; height: 18px; }
+  .u .torch::before { content: ""; position: absolute; left: 0; top: 0; width: 3px; height: 3px;
+    box-shadow: 3px 0 #ffd36b, 0 3px #ff8a3c, 3px 3px #ffe9a8, 6px 3px #ff8a3c, 0 6px #ff5a2a, 3px 6px #ffb347, 6px 6px #ff5a2a, 3px 9px #7a5330, 3px 12px #5c3d22, 3px 15px #3f2915;
+    filter: drop-shadow(0 0 5px rgba(255,140,60,.9)); }
+  @media (prefers-reduced-motion: no-preference) { .u .torch::before { animation: flick .6s steps(2) infinite; } }
+  @keyframes flick { 50% { filter: drop-shadow(0 0 8px rgba(255,160,70,.95)); transform: translateY(-1px); } }
+  .u .search { flex: 1; display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 12px; background: #0e0619; --frame: var(--acc); }
+  .u .search .q { font-family: "Galmuri11"; font-size: 14px; }
+  .u .caret { display: inline-block; width: 8px; height: 14px; margin-left: -6px; background: var(--acc); }
+  @media (prefers-reduced-motion: no-preference) { .u .caret { animation: blink 1s steps(1) infinite; } }
+  @keyframes blink { 50% { opacity: 0; } }
+  .u .key { margin-left: auto; padding: 0 6px; background: #2a1748; color: var(--muted); --c: #5b4a78; }
+
+  .u .tabs { display: flex; gap: 10px; margin: 4px 0 14px; padding-left: 3px; }
+  .u .tabs span { padding: 3px 12px; background: #1b0f2e; color: var(--muted); font-family: "Galmuri11"; font-size: 11px; --c: #5b4a78; }
+  .u .tabs span b { margin-left: 6px; font-weight: 400; color: #8f7bb0; }
+  .u .tabs span.on { background: #f3ead6; color: #1b1308; --c: #f3ead6; font-weight: 700; }
+  .u .tabs span.on b { color: #6a5a3a; }
+  .u .tabs span.zero { opacity: .55; }
+
+  .u .split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; align-items: start; }
+  .u .list { margin: 0; padding: 6px; list-style: none; background: var(--panel); }
+  .u .list .grp { display: flex; align-items: center; gap: 6px; padding: 8px 10px 4px; color: var(--muted); font-family: "Galmuri11"; font-size: 11px; }
+  .u .list li.row { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 10px; height: 42px; padding: 0 10px; border-bottom: 1px solid #2c1d45; }
+  .u .list li .sq { width: 10px; height: 10px; background: var(--g, #8e6fd0); }
+  .u .list li .nm { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: "Galmuri11"; font-weight: 700; font-size: 14px; }
+  .u .list li .nm small { margin-left: 8px; font-weight: 400; font-size: 11px; color: #d8c9f0; }
+  .u .list li .gr { color: var(--g); font-family: "Galmuri11"; font-size: 11px; }
+  .u .list li.on { background: #3a1f12; box-shadow: inset 3px 0 0 var(--acc); }
+  .u mark { background: none; color: inherit; text-decoration: underline 2px var(--acc); text-underline-offset: 4px; }
+  .u .hint { margin: 8px 4px 0; color: var(--muted); }
+  .u .hint kbd { padding: 0 4px; background: #2a1748; color: #efe6ff; font: inherit; }
+
+  .u .detail { padding: 16px 18px; background: var(--panel); }
+  .u .detail .kind { color: var(--muted); }
+  .u .detail h4 { display: flex; align-items: center; gap: 10px; margin: 2px 0 10px; font-family: "Galmuri11"; font-weight: 700; font-size: 22px; }
+  .u .detail h4 .badge { padding: 1px 6px; background: var(--common); color: #141414; font-size: 11px; font-weight: 400; }
+  .u .detail .desc { margin: 0 0 12px; color: #ece3fa; }
+  .u .detail .engs { display: flex; gap: 10px; margin: 0 0 6px; }
+  .u .detail .eng { padding: 2px 10px; background: #34205a; color: #f0e6ff; font-family: "Galmuri11"; font-size: 11px; --c: #8e6fd0; }
+  .u .detail h5 { margin: 14px 0 6px; color: var(--muted); font-family: "Galmuri11"; font-size: 11px; font-weight: 400; }
+  .u .tier { margin: 0 0 10px; padding: 8px 10px; background: #150a24; }
+  .u .tier .tn { display: flex; justify-content: space-between; font-family: "Galmuri11"; font-weight: 700; font-size: 14px; }
+  .u .tier .tn span { color: var(--acc); font-weight: 400; font-size: 11px; }
+  .u .tier table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .u .tier td { padding: 3px 4px; border-top: 1px solid #2c1d45; vertical-align: top; color: #e2d6f5; }
+  .u .tier td:first-child { width: 4.5em; white-space: nowrap; font-family: "Galmuri11"; font-size: 11px; color: var(--muted); padding-top: 6px; }
+  .u .tier tr.mod td { background: #2d1a10; }
+  .u .tier tr.mod td:first-child { color: #ffb98a; }
+
+  .u .foot { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 18px -20px 0; padding: 10px 20px; background: rgba(8,3,16,.75); border-top: 3px solid #0d0716; color: #b9a8d6; }
+  .u .foot a { color: #e4d5ff; text-decoration: underline; }
+</style>
+
+<h2>사이트 전체를 화면 하나로 합친 모습</h2>
+<p class="subtitle">사이트를 열면 바로 이 화면이 나오고, 검색창에 커서가 가 있습니다. 다른 곳을 보다가도 <b>/</b> 키를 누르면 검색창으로 돌아옵니다. 아래는 "칼레온"을 검색해서 <b>칼레온 계급장</b>을 고른 상태입니다. 내용은 실제 데이터입니다.</p>
+
+<div class="u">
+  <div class="bar">
+    <span class="title"><span class="torch" aria-hidden="true"></span>Skul 정리<span class="torch" aria-hidden="true"></span></span>
+    <div class="search frame"><span class="g11" style="opacity:.7">⌕</span><span class="q">칼레온</span><span class="caret"></span><span class="key g11 px2">/</span></div>
+  </div>
+  <div class="tabs">
+    <span class="on px2">전체<b>6</b></span><span class="px2">스컬<b>1</b></span><span class="px2">아이템<b>5</b></span><span class="px2 zero">각인<b>0</b></span>
+  </div>
+
+  <div class="split">
+    <div>
+      <ul class="list frame">
+        <li class="grp">스컬 1</li>
+        <li class="row" style="--g: var(--common)"><span class="sq"></span><span class="nm"><mark>칼레온</mark> 신병<small>궁병 + 중갑병</small></span><span class="gr">일반</span></li>
+        <li class="grp">아이템 5</li>
+        <li class="row" style="--g: var(--common)"><span class="sq"></span><span class="nm">보급형 <mark>칼레온</mark> 갑옷<small>전리품 · 요새</small></span><span class="gr">일반</span></li>
+        <li class="row" style="--g: var(--common)"><span class="sq"></span><span class="nm">보급형 <mark>칼레온</mark> 검<small>전리품 · 용기</small></span><span class="gr">일반</span></li>
+        <li class="row" style="--g: var(--common)"><span class="sq"></span><span class="nm">보급형 <mark>칼레온</mark> 스태프<small>전리품 · 지혜</small></span><span class="gr">일반</span></li>
+        <li class="row" style="--g: var(--common)"><span class="sq"></span><span class="nm">보급형 <mark>칼레온</mark> 활<small>전리품 · 강타</small></span><span class="gr">일반</span></li>
+        <li class="row on" style="--g: var(--common)"><span class="sq"></span><span class="nm"><mark>칼레온</mark> 계급장<small>전리품 · 보물</small></span><span class="gr">일반</span></li>
+      </ul>
+      <p class="hint g11"><kbd>/</kbd> 검색 · <kbd>↑</kbd><kbd>↓</kbd> 이동 · <kbd>Esc</kbd> 검색 지우기</p>
+    </div>
+
+    <div class="detail frame">
+      <div class="kind g11">아이템</div>
+      <h4>칼레온 계급장 <span class="badge g11">일반</span></h4>
+      <p class="desc">맵 이동 시 보유한 칼레온 아이템 1개당 30골드를 획득합니다. 대상: 칼레온 계급장, 보급형 칼레온 갑옷·검·스태프·활. 계급장 자체도 포함됩니다.</p>
+      <div class="engs"><span class="eng px2">전리품</span><span class="eng px2">보물</span></div>
+
+      <h5>각인 효과 (이 화면에서 바로)</h5>
+      <div class="tier">
+        <div class="tn">전리품 <span>개조 가능</span></div>
+        <table>
+          <tr><td>2개</td><td>교대 시 지면에 칼레온의 깃발을 꽂습니다. 깃발 주변에 있을 시 물리공격력 및 마법공격력이 35% 증가합니다.</td></tr>
+          <tr class="mod"><td>2개 개조</td><td>깃발 아래에서 공격력 20% 증폭. 물리공격력과 마법공격력 중 높은 쪽의 공격력을 기반으로 총공세를 가함.</td></tr>
+        </table>
+      </div>
+      <div class="tier">
+        <div class="tn">보물 <span>개조 가능</span></div>
+        <table>
+          <tr><td>2개</td><td>전투 중 보물을 가진 적을 발견할 수 있습니다.</td></tr>
+          <tr><td>4개</td><td>이 각인의 효과로 발견할 수 있는 보물상자에서 얻을 수 있는 보상의 종류가 늘어납니다.</td></tr>
+          <tr class="mod"><td>4개 개조</td><td>보유한 보물 각인 효과 1개당 적에게 입히는 데미지가 5% 증폭됩니다. 이 효과가 활성화시 황금왕의 상자가 나타납니다.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot g11">
+    <span>비공식 팬 정리 페이지 · 게임 관련 권리는 SouthPAW Games</span>
+    <span>스킬 추천: <a>디시 스컬 갤러리 · 정도</a></span>
+    <span>스킬·아이템·각인: <a>나무위키 문서 7개</a> (<a>CC BY-NC-SA 2.0 KR</a>)</span>
+  </div>
+</div>
+
+</body>
+</html>

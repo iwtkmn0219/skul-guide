@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안: mood</title>
+<link rel="stylesheet" href="frame.css">
+<script>function toggleSelect(el){el.classList.toggle("selected")}</script>
+</head>
+<body>
+<style>
+  .cards .card-image { aspect-ratio: auto; display: block; padding: 0; background: none; }
+  .demo { position: relative; padding: 16px 16px 20px; min-height: 300px; font-family: system-ui, "Segoe UI", "Malgun Gothic", sans-serif; line-height: 1.5; word-break: keep-all; text-align: left; }
+  .demo .top { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-weight: 800; font-size: 1.05rem; }
+  .demo .search { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; margin-bottom: 8px; font-size: .95rem; }
+  .demo .search .ico { opacity: .7; font-size: .85rem; }
+  .demo .caret { display: inline-block; width: 2px; height: 1.1em; margin-left: -6px; }
+  @media (prefers-reduced-motion: no-preference) { .demo .caret { animation: blink 1s steps(1) infinite; } }
+  @keyframes blink { 50% { opacity: 0; } }
+  .demo .count { font-size: .78rem; margin: 0 0 8px; }
+  .demo .res { padding: 12px 14px; }
+  .demo .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .demo .name { font-size: 1.02rem; font-weight: 800; flex: 1 1 auto; }
+  .demo .grade { font-size: .72rem; font-weight: 700; padding: 1px 7px; }
+  .demo .chips { display: flex; gap: 6px; margin: 8px 0; }
+  .demo .chips span { font-size: .8rem; font-weight: 600; padding: 2px 10px; }
+  .demo .desc { margin: 0; font-size: .9rem; }
+  .demo mark { background: none; color: inherit; text-decoration: underline 2px; text-underline-offset: 4px; }
+
+  /* A. 마왕성의 밤: 도입 화면처럼 깊은 보라 + 은은한 빛 */
+  .ma { background: radial-gradient(120% 90% at 85% 0%, #7a35c8 0%, #3a1666 38%, #1a0a2e 75%); color: #f4eeff; }
+  .ma .top { letter-spacing: .02em; text-shadow: 0 0 12px rgba(200,150,255,.7); }
+  .ma .top::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(220,190,255,.7), transparent); }
+  .ma .search { background: rgba(20,6,40,.55); border: 1px solid rgba(210,180,255,.35); border-radius: 10px; box-shadow: 0 0 18px rgba(160,90,255,.25) inset; }
+  .ma .caret { background: #e9d6ff; }
+  .ma .count { color: #c9b6ea; }
+  .ma .res { background: rgba(255,255,255,.06); border: 1px solid rgba(210,180,255,.28); border-radius: 10px; box-shadow: 0 0 24px rgba(150,80,255,.22); }
+  .ma .grade { color: #ffcf7a; border: 1px solid rgba(255,207,122,.6); border-radius: 999px; }
+  .ma .chips span { border: 1px solid rgba(210,180,255,.45); border-radius: 999px; color: #eadcff; }
+  .ma .desc { color: #e2d6f5; }
+  .ma mark { text-decoration-color: #ffcf7a; }
+
+  /* B. 픽셀 프레임: 각진 픽셀 테두리, 뼈 색, 번짐 없음 */
+  .px { background-color: #16111d; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 8px 8px; color: #f3ead6; }
+  .px .top { text-transform: none; letter-spacing: .08em; color: #f3ead6; }
+  .px .top::before { content: ""; width: 10px; height: 10px; background: #ff7a3d; box-shadow: 3px 3px 0 #7a2c0c; }
+  .px .frame { margin: 3px; box-shadow: 0 -3px 0 0 #e9dfc8, 0 3px 0 0 #e9dfc8, -3px 0 0 0 #e9dfc8, 3px 0 0 0 #e9dfc8, 6px 9px 0 0 #000; }
+  .px .search { background: #0d0a12; }
+  .px .caret { width: 9px; background: #ff7a3d; margin-left: -4px; }
+  .px .count { color: #b8ad98; margin-top: 14px; }
+  .px .res { background: #251d30; }
+  .px .grade { background: #f0b552; color: #1b1308; }
+  .px .chips span { background: #3a2f47; color: #f3ead6; box-shadow: 0 -2px 0 0 #8d7fa3, 0 2px 0 0 #8d7fa3, -2px 0 0 0 #8d7fa3, 2px 0 0 0 #8d7fa3; margin: 2px; }
+  .px .desc { color: #e6dcc6; }
+  .px mark { text-decoration-color: #ff7a3d; }
+
+  /* C. 섞기: A의 보라 밤 배경 + B의 픽셀 테두리 정보 칸 */
+  .mx { background: radial-gradient(120% 90% at 85% 0%, #5e2a9c 0%, #2c1250 40%, #150a24 78%); color: #f4eeff; }
+  .mx .top { text-shadow: 0 0 10px rgba(200,150,255,.6); }
+  .mx .top::before { content: ""; width: 8px; height: 8px; background: #ff8a4c; box-shadow: 0 0 8px #ff8a4c; }
+  .mx .frame { margin: 3px; box-shadow: 0 -3px 0 0 #8e6fd0, 0 3px 0 0 #8e6fd0, -3px 0 0 0 #8e6fd0, 3px 0 0 0 #8e6fd0; }
+  .mx .search { background: #140924; }
+  .mx .caret { background: #ff8a4c; }
+  .mx .count { color: #c9b6ea; margin-top: 12px; }
+  .mx .res { background: #21123a; }
+  .mx .grade { background: #f0b552; color: #1b1308; }
+  .mx .chips span { background: #34205a; color: #f0e6ff; border-radius: 0; box-shadow: 0 -2px 0 0 #6d55a3, 0 2px 0 0 #6d55a3, -2px 0 0 0 #6d55a3, 2px 0 0 0 #6d55a3; margin: 2px; }
+  .mx .desc { color: #e2d6f5; }
+  .mx mark { text-decoration-color: #ff8a4c; }
+</style>
+
+<h2>어느 쪽이 "Skul 느낌"에 가까운가요?</h2>
+<p class="subtitle">같은 화면("까마귀"를 검색한 결과)을 세 가지 분위기로 만들었습니다. 지금은 색과 질감만 비교해 주세요. 배치와 크기는 다음에 정합니다. 게임 로고나 캐릭터 그림은 쓰지 않고, 색과 모양으로만 분위기를 냅니다.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo ma">
+        <div class="top">Skul 정리</div>
+        <div class="search"><span class="ico">⌕</span><span>까마귀</span><span class="caret"></span></div>
+        <p class="count">결과 1개 · 아이템</p>
+        <div class="res">
+          <div class="head"><span class="name"><mark>까마귀</mark> 군주의 깃털</span><span class="grade">레전더리</span></div>
+          <div class="chips"><span>고대의 힘</span><span>돌연변이</span></div>
+          <p class="desc">교대 시 주변 적들에게 마법데미지를 입히고 소용돌이의 중심으로 끌어당깁니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 마왕성의 밤</h3>
+      <p>도입 화면처럼 깊은 보라 바탕에 은은한 빛을 둡니다. 부드럽고 분위기를 살리는 쪽입니다.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo px">
+        <div class="top">Skul 정리</div>
+        <div class="search frame"><span class="ico">⌕</span><span>까마귀</span><span class="caret"></span></div>
+        <p class="count">결과 1개 · 아이템</p>
+        <div class="res frame">
+          <div class="head"><span class="name"><mark>까마귀</mark> 군주의 깃털</span><span class="grade">레전더리</span></div>
+          <div class="chips"><span>고대의 힘</span><span>돌연변이</span></div>
+          <p class="desc">교대 시 주변 적들에게 마법데미지를 입히고 소용돌이의 중심으로 끌어당깁니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 픽셀 프레임</h3>
+      <p>각진 픽셀 테두리와 뼈 색 틀을 씁니다. 빛 번짐 없이 또렷해서 게임 안의 메뉴 화면에 가깝습니다.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo mx">
+        <div class="top">Skul 정리</div>
+        <div class="search frame"><span class="ico">⌕</span><span>까마귀</span><span class="caret"></span></div>
+        <p class="count">결과 1개 · 아이템</p>
+        <div class="res frame">
+          <div class="head"><span class="name"><mark>까마귀</mark> 군주의 깃털</span><span class="grade">레전더리</span></div>
+          <div class="chips"><span>고대의 힘</span><span>돌연변이</span></div>
+          <p class="desc">교대 시 주변 적들에게 마법데미지를 입히고 소용돌이의 중심으로 끌어당깁니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 섞기</h3>
+      <p>바탕은 A의 보라 밤, 정보 칸은 B의 픽셀 테두리를 씁니다. 분위기와 또렷함을 같이 챙기는 쪽입니다.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

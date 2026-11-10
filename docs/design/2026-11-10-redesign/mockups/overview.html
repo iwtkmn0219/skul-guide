@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안: overview</title>
+<link rel="stylesheet" href="frame.css">
+<script>function toggleSelect(el){el.classList.toggle("selected")}</script>
+</head>
+<body>
+<style>
+  @font-face { font-family: "Galmuri11"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri11"; font-weight: 700; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri14"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri14.woff2") format("woff2"); font-display: swap; }
+
+  .u { --panel: #1b0f2e; --frame: #8e6fd0; --text: #f4eeff; --muted: #c9b6ea; --acc: #ff8a4c;
+    --common: #a3a3a3; --rare: #6ea6f0; --unique: #c08cf0; --legendary: #f0b552;
+    position: relative; padding: 0 20px 20px; border-radius: 10px; overflow: hidden; color: var(--text);
+    font-family: "Galmuri14", system-ui, sans-serif; font-size: 14px; line-height: 1.6; word-break: keep-all; text-align: left;
+    background-color: #24143a;
+    background-image: radial-gradient(30% 30% at 0% 0%, rgba(255,130,50,.28), transparent 70%), radial-gradient(30% 30% at 100% 0%, rgba(255,130,50,.28), transparent 70%), linear-gradient(rgba(10,4,20,.3), rgba(10,4,20,.7)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+  .u .g11 { font-family: "Galmuri11", system-ui, sans-serif; font-size: 11px; }
+  .u .frame { margin: 3px; box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame); }
+  .u .px2 { box-shadow: 0 -2px 0 0 var(--c), 0 2px 0 0 var(--c), -2px 0 0 0 var(--c), 2px 0 0 0 var(--c); }
+  .u .bar { display: flex; align-items: center; gap: 16px; padding: 16px 0 12px; }
+  .u .title { font-family: "Galmuri11"; font-weight: 700; font-size: 22px; color: #f3ead6; text-shadow: 2px 2px 0 #000; white-space: nowrap; }
+  .u .search { flex: 1; display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 12px; background: #0e0619; color: var(--muted); }
+  .u .key { margin-left: auto; padding: 0 6px; background: #2a1748; color: var(--muted); --c: #5b4a78; }
+  .u .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 14px; padding-left: 3px; }
+  .u .tabs span { padding: 3px 12px; background: #1b0f2e; color: var(--muted); --c: #5b4a78; }
+  .u .tabs span b { margin-left: 6px; font-weight: 400; color: #8f7bb0; }
+  .u .tabs span.on { background: #f3ead6; color: #1b1308; --c: #f3ead6; font-weight: 700; }
+  .u .tabs span.on b { color: #6a5a3a; }
+  .u .split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; align-items: start; }
+  .u .list { margin: 0; padding: 6px; list-style: none; background: var(--panel); }
+  .u .list .grp { padding: 8px 10px 4px; color: var(--muted); }
+  .u .list li.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-bottom: 1px solid #2c1d45; }
+  .u .list li .nm { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: "Galmuri11"; font-weight: 700; font-size: 14px; }
+  .u .list li .r { color: #b9a8d6; }
+  .u .list li.on { background: #3a1f12; box-shadow: inset 3px 0 0 var(--acc); }
+  .u .detail { padding: 16px 18px; background: var(--panel); }
+  .u .detail .kind { color: var(--muted); }
+  .u .detail h4 { display: flex; align-items: center; gap: 10px; margin: 2px 0 10px; font-family: "Galmuri11"; font-weight: 700; font-size: 22px; }
+  .u .detail h4 .badge { padding: 1px 6px; background: #4a3a66; color: #efe6ff; font-weight: 400; }
+  .u .detail h5 { margin: 14px 0 8px; color: var(--muted); font-weight: 400; }
+  .u .tier { margin: 0 0 10px; padding: 8px 10px; background: #150a24; }
+  .u .tier table { width: 100%; border-collapse: collapse; }
+  .u .tier td { padding: 3px 4px; border-top: 1px solid #2c1d45; vertical-align: top; color: #e2d6f5; }
+  .u .tier tr:first-child td { border-top: 0; }
+  .u .tier td:first-child { width: 4.5em; white-space: nowrap; font-family: "Galmuri11"; font-size: 11px; color: var(--muted); padding-top: 6px; }
+  .u .tier tr.mod td { background: #2d1a10; }
+  .u .tier tr.mod td:first-child { color: #ffb98a; }
+  .u .slot { display: grid; place-items: center; flex: none; width: 64px; height: 64px; background: radial-gradient(circle at 50% 40%, #33214f, #120a1f 75%);
+    box-shadow: 0 -3px 0 0 var(--g), 0 3px 0 0 var(--g), -3px 0 0 0 var(--g), 3px 0 0 0 var(--g), inset 0 0 0 3px rgba(0,0,0,.35);
+    color: var(--g); font-family: "Galmuri11"; font-weight: 700; font-size: 22px; text-shadow: 2px 2px 0 #000; }
+  .u .mini { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+  .u .mini > div { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px 6px; background: #150a24; }
+  .u .mini .slot { width: 40px; height: 40px; font-size: 14px; box-shadow: 0 -2px 0 0 var(--g), 0 2px 0 0 var(--g), -2px 0 0 0 var(--g), 2px 0 0 0 var(--g); }
+  .u .mini span:last-child { max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+  /* 휴대폰 */
+  .phones { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; }
+  .phone { width: 360px; height: 700px; border-radius: 26px; overflow: hidden; border: 6px solid #0b0b0b; box-shadow: 0 0 0 1px #444; }
+  .phone .u { height: 100%; padding: 0 12px 12px; border-radius: 0; }
+  .phone .bar { flex-wrap: wrap; gap: 8px; padding: 12px 0 8px; }
+  .phone .title { font-size: 16px; }
+  .phone .search { flex: 1 1 100%; }
+  .phone .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .phone .tile { display: flex; flex-direction: column; align-items: center; gap: 8px; height: 172px; padding: 12px 6px 10px; background: var(--panel); --frame: #4a3a66; }
+  .phone .tname { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.9em; line-height: 1.45; text-align: center; }
+  .phone .tengs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: auto; }
+  .phone .tengs span { padding: 0 5px; background: #2a1748; color: #e4d5ff; --c: #5b4a78; }
+  .phone .sec { display: flex; align-items: center; gap: 8px; margin: 2px 0 10px; font-family: "Galmuri11"; font-weight: 700; color: #9cc3f5; }
+  .phone .sec::before { content: ""; width: 8px; height: 8px; background: var(--rare); }
+  .phone .back { display: inline-block; margin: 14px 0 10px; padding: 4px 12px; background: #2a1748; color: #efe6ff; --c: var(--acc); }
+  .phone .detail { padding: 14px; }
+  .phone .detail .top { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+  .phone .detail h4 { font-size: 16px; margin: 0; }
+  .phone .detail h4 .badge { background: var(--rare); color: #0d1a2c; }
+  .phone .detail .desc { margin: 0 0 8px; color: #ece3fa; }
+  .cap { text-align: center; color: var(--text-secondary); font-size: .85rem; margin-top: 8px; }
+</style>
+
+<h2>남은 부분: 각인 탭과 휴대폰 화면</h2>
+<p class="subtitle">각인 탭은 스컬 탭처럼 목록과 상세로 구성했습니다. 상세 아래에는 이 각인이 붙은 아이템을 작은 칸으로 보여 줍니다. 칸을 누르면 그 아이템으로 넘어갑니다. 휴대폰에서는 목록과 격자가 화면을 다 쓰고, 고르면 상세가 화면을 덮습니다.</p>
+
+<div class="u">
+  <div class="bar"><span class="title">Skul 정리</span><div class="search frame g11">아이템, 스컬, 각인 이름<span class="key px2">/</span></div></div>
+  <div class="tabs g11"><span class="px2">전체<b>339</b></span><span class="px2">스컬<b>45</b></span><span class="px2">아이템<b>258</b></span><span class="on px2">각인<b>36</b></span></div>
+  <div class="split">
+    <ul class="list frame">
+      <li class="grp g11">특수능력 각인(방어) 6</li>
+      <li class="row"><span class="nm">가보</span><span class="r g11">개조 가능</span></li>
+      <li class="row"><span class="nm">성물</span><span class="r g11">개조 가능</span></li>
+      <li class="row"><span class="nm">요새</span><span class="r g11">개조 가능</span></li>
+      <li class="row"><span class="nm">추적</span><span class="r g11">개조 가능</span></li>
+      <li class="row"><span class="nm">뼈</span><span class="r g11">개조 가능</span></li>
+      <li class="row on"><span class="nm">보물</span><span class="r g11">개조 가능</span></li>
+      <li class="grp g11">능력치 각인 15</li>
+      <li class="row"><span class="nm">강타</span><span class="r g11">개조 가능</span></li>
+      <li class="row"><span class="nm">고대의 힘</span><span class="r g11">개조 가능</span></li>
+    </ul>
+    <div class="detail frame">
+      <div class="kind g11">각인 · 특수능력 각인(방어)</div>
+      <h4>보물 <span class="badge g11">개조 가능</span></h4>
+      <div class="tier"><table>
+        <tr><td>2개</td><td>전투 중 보물을 가진 적을 발견할 수 있습니다.</td></tr>
+        <tr><td>4개</td><td>이 각인의 효과로 발견할 수 있는 보물상자에서 얻을 수 있는 보상의 종류가 늘어납니다.</td></tr>
+        <tr class="mod"><td>4개 개조</td><td>보유한 보물 각인 효과 1개당 적에게 입히는 데미지가 5% 증폭됩니다. 이 효과가 활성화시 황금왕의 상자가 나타납니다.</td></tr></table></div>
+      <h5 class="g11">이 각인이 붙은 아이템 14</h5>
+      <div class="mini g11">
+        <div style="--g: var(--common)"><span class="slot">계</span><span>칼레온 계급장</span></div>
+        <div style="--g: var(--rare)"><span class="slot">발</span><span>발광석</span></div>
+        <div style="--g: var(--rare)"><span class="slot">채</span><span>황금 채찍</span></div>
+        <div style="--g: var(--rare)"><span class="slot">황</span><span>황금향로</span></div>
+        <div style="--g: var(--rare)"><span class="slot">칼</span><span>황금의 칼</span></div>
+        <div style="--g: var(--rare)"><span class="slot">완</span><span>황금의 완드</span></div>
+        <div style="--g: var(--unique)"><span class="slot">돌</span><span>돌가면</span></div>
+        <div style="--g: var(--unique)"><span class="slot">황</span><span>크레타의 황소</span></div>
+        <div style="--g: var(--unique)"><span class="slot">보</span><span>훈장 보관함</span></div>
+        <div style="--g: var(--legendary)"><span class="slot">항</span><span>욕망의 항아리</span></div>
+        <div style="--g: var(--legendary)"><span class="slot">절</span><span>절대반지</span></div>
+        <div style="--g: var(--legendary)"><span class="slot">가</span><span>황금왕의 가호</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:32px">휴대폰 (360px)</h3>
+<div class="phones">
+  <div>
+    <div class="phone"><div class="u">
+      <div class="bar"><span class="title">Skul 정리</span><div class="search frame g11">아이템, 스컬, 각인 이름</div></div>
+      <div class="tabs g11"><span class="px2">전체<b>339</b></span><span class="px2">스컬<b>45</b></span><span class="on px2">아이템<b>258</b></span><span class="px2">각인<b>36</b></span></div>
+      <div class="sec">레어 96</div>
+      <div class="grid" style="--g: var(--rare)">
+        <div class="tile frame"><span class="slot">가</span><span class="tname">가속검</span><span class="tengs g11"><span class="px2">무구</span><span class="px2">신속</span></span></div>
+        <div class="tile frame"><span class="slot">가</span><span class="tname">가시견갑</span><span class="tengs g11"><span class="px2">요새</span><span class="px2">과다출혈</span></span></div>
+        <div class="tile frame"><span class="slot">가</span><span class="tname">가시장화</span><span class="tengs g11"><span class="px2">비상</span><span class="px2">과다출혈</span></span></div>
+        <div class="tile frame"><span class="slot">상</span><span class="tname">강인함의 상징</span><span class="tengs g11"><span class="px2">요새</span><span class="px2">가보</span></span></div>
+      </div>
+    </div></div>
+    <p class="cap">아이템 탭: 2칸 격자</p>
+  </div>
+  <div>
+    <div class="phone"><div class="u">
+      <span class="back g11 px2">◀ 목록</span>
+      <div class="detail frame">
+        <div class="top"><span class="slot" style="--g: var(--rare)">상</span><div><div class="kind g11">아이템</div><h4>강인함의 상징 <span class="badge g11">레어</span></h4></div></div>
+        <p class="desc g11" style="font-size:14px;font-family:Galmuri14">(아이템 설명)</p>
+        <h5 class="g11">각인 효과</h5>
+        <div class="tier"><table>
+          <tr><td>요새 2개</td><td>35초마다 10의 방어막을 얻습니다.</td></tr>
+          <tr><td>요새 4개</td><td>방어막을 가지고 있는 상태일 시 받는 데미지가 50% 감소합니다.</td></tr></table></div>
+        <div class="tier"><table>
+          <tr><td>가보 …</td><td>…</td></tr></table></div>
+      </div>
+    </div></div>
+    <p class="cap">고르면 상세가 화면을 덮고, 뒤로 가기로 돌아옵니다</p>
+  </div>
+</div>
+
+</body>
+</html>

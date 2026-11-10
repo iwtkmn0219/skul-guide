@@ -119,6 +119,23 @@ npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라�
 - 그 밖의 코드(`public/js/skills.js`, `public/js/items.js` 제외)는 위 라이선스와 별개입니다.
 - 게임 관련 권리는 SouthPAW Games에 있습니다.
 
+## 글꼴
+
+- 픽셀 글꼴 [갈무리](https://github.com/quiple/galmuri) 2.40.3(Galmuri11, Galmuri11-Bold, Galmuri14)을 씁니다. 라이선스는 SIL Open Font License 1.1이고, 전문은 `public/fonts/OFL.txt`에 있습니다.
+- `public/fonts/*.woff2`는 서브셋입니다. ASCII, KS X 1001 한글 2,350자, `public/`의 html·js·css에 실제로 쓰인 글자만 남겼습니다. 남긴 글자 목록은 `tools/font-chars.txt`입니다.
+- 다시 만들려면 개발용 도구와 원본 글꼴이 필요합니다(`sources/`는 저장소에 넣지 않습니다).
+
+  ```bash
+  python -m pip install --user fonttools brotli
+  mkdir -p sources/galmuri && cd sources/galmuri
+  npm pack galmuri@2.40.3
+  tar -xzf galmuri-2.40.3.tgz package/dist/Galmuri11.woff2 package/dist/Galmuri11-Bold.woff2 package/dist/Galmuri14.woff2 package/dist/LICENSE.txt
+  mv package/dist/* . && rm -r package galmuri-2.40.3.tgz && cd ../..
+  npm run build:fonts
+  ```
+
+- 화면 문구나 데이터에 새 글자가 들어가면 `tests/fonts.test.js`가 실패하며 빠진 글자를 알려 줍니다. 그때 `npm run build:fonts`를 다시 실행하고, 바뀐 `public/fonts/*.woff2`와 `tools/font-chars.txt`를 함께 커밋합니다.
+
 ## 배포 (Cloudflare Workers 정적 자산)
 
 사이트는 Cloudflare Workers의 `skul-guide` Worker에 정적 자산으로 올라가 있습니다. Worker 코드는 없고 `public/` 폴더만 배포합니다.

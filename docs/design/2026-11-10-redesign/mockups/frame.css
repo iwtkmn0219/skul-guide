@@ -1,0 +1,11 @@
+/* 시안 보기용 틀. 브레인스토밍 화면의 기본 스타일 중 시안이 기대는 부분만 옮겼다. 사이트에는 쓰지 않는다. */
+:root { color-scheme: dark; --accent: #ff8a4c; --text-secondary: #a8a29e; --bg-secondary: #2a2a2e; --border: #3d3d42; }
+body { margin: 0; padding: 32px; background: #1c1c1f; color: #ececec; font-family: system-ui, "Segoe UI", "Malgun Gothic", sans-serif; line-height: 1.5; }
+h2 { margin: 0 0 8px; font-size: 1.5rem; }
+h3 { margin: 0 0 4px; }
+.subtitle { margin: 0 0 24px; color: var(--text-secondary); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.card.selected, .opt.selected { outline: 2px solid var(--accent); }
+.card-body { padding: 1rem; }
+.card-body p { margin: 0; color: var(--text-secondary); font-size: .85rem; }

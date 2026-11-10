@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안: item-grid</title>
+<link rel="stylesheet" href="frame.css">
+<script>function toggleSelect(el){el.classList.toggle("selected")}</script>
+</head>
+<body>
+<style>
+  @font-face { font-family: "Galmuri11"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri11"; font-weight: 700; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri14"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri14.woff2") format("woff2"); font-display: swap; }
+
+  .opt { margin: 0 0 32px; border: 2px solid transparent; border-radius: 12px; cursor: pointer; }
+  .opt.selected { border-color: var(--accent); }
+  .opt > h3 { margin: 10px 12px 4px; }
+  .opt > p.why { margin: 0 12px 10px; color: var(--text-secondary); font-size: .9rem; }
+
+  .u { --panel: #1b0f2e; --frame: #8e6fd0; --text: #f4eeff; --muted: #c9b6ea; --acc: #ff8a4c; --common: #a3a3a3;
+    position: relative; padding: 0 20px 20px; border-radius: 10px; overflow: hidden; color: var(--text);
+    font-family: "Galmuri14", system-ui, sans-serif; font-size: 14px; line-height: 1.6; word-break: keep-all; text-align: left;
+    background-color: #24143a;
+    background-image: radial-gradient(30% 30% at 0% 0%, rgba(255,130,50,.28), transparent 70%), radial-gradient(30% 30% at 100% 0%, rgba(255,130,50,.28), transparent 70%), linear-gradient(rgba(10,4,20,.3), rgba(10,4,20,.7)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+  .u .g11 { font-family: "Galmuri11", system-ui, sans-serif; font-size: 11px; }
+  .u .frame { margin: 3px; box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame); }
+  .u .px2 { box-shadow: 0 -2px 0 0 var(--c), 0 2px 0 0 var(--c), -2px 0 0 0 var(--c), 2px 0 0 0 var(--c); }
+
+  .u .bar { display: flex; align-items: center; gap: 16px; padding: 16px 0 12px; }
+  .u .title { font-family: "Galmuri11"; font-weight: 700; font-size: 22px; color: #f3ead6; text-shadow: 2px 2px 0 #000; white-space: nowrap; }
+  .u .search { flex: 1; display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 12px; background: #0e0619; color: var(--muted); }
+  .u .key { margin-left: auto; padding: 0 6px; background: #2a1748; color: var(--muted); --c: #5b4a78; }
+  .u .tabs { display: flex; gap: 10px; margin: 4px 0 14px; padding-left: 3px; }
+  .u .tabs span { padding: 3px 12px; background: #1b0f2e; color: var(--muted); --c: #5b4a78; }
+  .u .tabs span b { margin-left: 6px; font-weight: 400; color: #8f7bb0; }
+  .u .tabs span.on { background: #f3ead6; color: #1b1308; --c: #f3ead6; font-weight: 700; }
+  .u .tabs span.on b { color: #6a5a3a; }
+  .u .sec { display: flex; align-items: center; gap: 8px; margin: 2px 0 12px; font-family: "Galmuri11"; font-weight: 700; color: #d9d9d9; }
+  .u .sec::before { content: ""; width: 8px; height: 8px; background: var(--common); }
+
+  /* 아이템 칸 */
+  .u .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
+  .u .tile { display: flex; flex-direction: column; align-items: center; gap: 8px; height: 172px; padding: 12px 6px 10px; background: var(--panel); --frame: #4a3a66; }
+  .u .slot { display: grid; place-items: center; flex: none; width: 64px; height: 64px; background: radial-gradient(circle at 50% 40%, #33214f, #120a1f 75%);
+    box-shadow: 0 -3px 0 0 var(--g), 0 3px 0 0 var(--g), -3px 0 0 0 var(--g), 3px 0 0 0 var(--g), inset 0 0 0 3px rgba(0,0,0,.35);
+    color: var(--g); font-family: "Galmuri11"; font-weight: 700; font-size: 22px; text-shadow: 2px 2px 0 #000; }
+  .u .tname { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.9em; line-height: 1.45; text-align: center; }
+  .u .tengs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: auto; }
+  .u .tengs span { padding: 0 5px; background: #2a1748; color: #e4d5ff; --c: #5b4a78; }
+  .u .tile.on { --frame: var(--acc); background: #3a1f12; }
+
+  /* 상세 */
+  .u .detail { padding: 16px 18px; background: var(--panel); }
+  .u .detail .top { display: flex; gap: 14px; align-items: center; margin-bottom: 10px; }
+  .u .detail .kind { color: var(--muted); }
+  .u .detail h4 { display: flex; align-items: center; gap: 10px; margin: 0; font-family: "Galmuri11"; font-weight: 700; font-size: 22px; }
+  .u .detail h4 .badge { padding: 1px 6px; background: var(--common); color: #141414; font-weight: 400; }
+  .u .detail .desc { margin: 0 0 12px; color: #ece3fa; }
+  .u .detail h5 { margin: 12px 0 6px; color: var(--muted); font-family: "Galmuri11"; font-size: 11px; font-weight: 400; }
+  .u .tier { margin: 0 0 10px; padding: 8px 10px; background: #150a24; }
+  .u .tier .tn { display: flex; justify-content: space-between; font-family: "Galmuri11"; font-weight: 700; font-size: 14px; }
+  .u .tier .tn span { color: var(--acc); font-weight: 400; font-size: 11px; }
+  .u .tier table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .u .tier td { padding: 3px 4px; border-top: 1px solid #2c1d45; vertical-align: top; color: #e2d6f5; }
+  .u .tier td:first-child { width: 4.5em; white-space: nowrap; font-family: "Galmuri11"; font-size: 11px; color: var(--muted); padding-top: 6px; }
+  .u .tier tr.mod td { background: #2d1a10; }
+  .u .tier tr.mod td:first-child { color: #ffb98a; }
+
+  .u .split { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+
+  /* B: 띄우는 창 */
+  .u .dim { position: absolute; inset: 0; background: rgba(5,2,10,.62); }
+  .u .pop { position: absolute; top: 112px; left: 50%; width: min(600px, 90%); transform: translateX(-50%); --frame: var(--acc); box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame), 8px 11px 0 0 #000; }
+  .u .pop .close { position: absolute; top: 12px; right: 14px; padding: 0 6px; background: #2a1748; color: var(--muted); --c: #5b4a78; }
+</style>
+
+<h2>아이템 탭: 그림 격자</h2>
+<p class="subtitle">칸 크기는 모두 같습니다. 그림 칸 안에는 이름 마지막 낱말의 첫 글자를 등급 색으로 넣었습니다(그림을 구하면 그림으로 바뀝니다). 그 아래에 이름(최대 두 줄)과 각인을 둡니다. 상세를 어디에 보여 줄지 두 가지로 만들었습니다.</p>
+
+<div class="opt" data-choice="side" onclick="toggleSelect(this)">
+  <h3>A. 격자 + 오른쪽 상세 (스컬·각인 탭과 같은 자리)</h3>
+  <p class="why">칸을 고르면 오른쪽 상세가 바로 바뀝니다. 방향키로 칸을 옮겨 다니면서 상세를 연달아 볼 수 있습니다. 대신 한 줄에 들어가는 칸 수가 적습니다.</p>
+  <div class="u">
+    <div class="bar"><span class="title">Skul 정리</span><div class="search frame g11">아이템, 스컬, 각인 이름<span class="key px2">/</span></div></div>
+    <div class="tabs g11"><span class="px2">전체<b>339</b></span><span class="px2">스컬<b>45</b></span><span class="on px2">아이템<b>258</b></span><span class="px2">각인<b>36</b></span></div>
+    <div class="split">
+      <div>
+        <div class="sec">일반 18</div>
+        <div class="grid" style="--g: var(--common)">
+          <div class="tile frame"><span class="slot">데</span><span class="tname">그림자 정령 데스</span><span class="tengs g11"><span class="px2">동화</span><span class="px2">난투</span></span></div>
+          <div class="tile frame"><span class="slot">십</span><span class="tname">낡은 십자가</span><span class="tengs g11"><span class="px2">성물</span><span class="px2">현기증</span></span></div>
+          <div class="tile frame"><span class="slot">팬</span><span class="tname">독극물 팬던트</span><span class="tengs g11"><span class="px2">가보</span><span class="px2">독살</span></span></div>
+          <div class="tile frame"><span class="slot">톱</span><span class="tname">마공학 톱니바퀴</span><span class="tengs g11"><span class="px2">마공학</span><span class="px2">방화</span></span></div>
+          <div class="tile frame"><span class="slot">씨</span><span class="tname">미지의 씨앗</span><span class="tengs g11"><span class="px2">고대의 힘</span><span class="px2">마나 순환</span></span></div>
+          <div class="tile frame"><span class="slot">반</span><span class="tname">바람의 반지</span><span class="tengs g11"><span class="px2">가보</span><span class="px2">비상</span></span></div>
+          <div class="tile frame"><span class="slot">갑</span><span class="tname">보급형 칼레온 갑옷</span><span class="tengs g11"><span class="px2">전리품</span><span class="px2">요새</span></span></div>
+          <div class="tile frame on"><span class="slot">계</span><span class="tname">칼레온 계급장</span><span class="tengs g11"><span class="px2">전리품</span><span class="px2">보물</span></span></div>
+        </div>
+      </div>
+      <div class="detail frame">
+        <div class="top"><span class="slot" style="--g: var(--common)">계</span><div><div class="kind g11">아이템</div><h4>칼레온 계급장 <span class="badge g11">일반</span></h4></div></div>
+        <p class="desc">맵 이동 시 보유한 칼레온 아이템 1개당 30골드를 획득합니다. 대상: 칼레온 계급장, 보급형 칼레온 갑옷·검·스태프·활. 계급장 자체도 포함됩니다.</p>
+        <h5>각인 효과</h5>
+        <div class="tier"><div class="tn">전리품 <span>개조 가능</span></div><table>
+          <tr><td>2개</td><td>교대 시 지면에 칼레온의 깃발을 꽂습니다. 깃발 주변에 있을 시 물리공격력 및 마법공격력이 35% 증가합니다.</td></tr>
+          <tr class="mod"><td>2개 개조</td><td>깃발 아래에서 공격력 20% 증폭. 물리공격력과 마법공격력 중 높은 쪽의 공격력을 기반으로 총공세를 가함.</td></tr></table></div>
+        <div class="tier"><div class="tn">보물 <span>개조 가능</span></div><table>
+          <tr><td>2개</td><td>전투 중 보물을 가진 적을 발견할 수 있습니다.</td></tr>
+          <tr><td>4개</td><td>이 각인의 효과로 발견할 수 있는 보물상자에서 얻을 수 있는 보상의 종류가 늘어납니다.</td></tr>
+          <tr class="mod"><td>4개 개조</td><td>보유한 보물 각인 효과 1개당 적에게 입히는 데미지가 5% 증폭됩니다. 이 효과가 활성화시 황금왕의 상자가 나타납니다.</td></tr></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="opt" data-choice="popup" onclick="toggleSelect(this)">
+  <h3>B. 넓은 격자 + 누르면 뜨는 창</h3>
+  <p class="why">격자가 화면 전체를 써서 한 번에 많은 아이템이 보입니다. 칸을 누르거나 Enter를 치면 상세 창이 뜨고, Esc를 누르면 닫힙니다.</p>
+  <div class="u" style="min-height: 720px">
+    <div class="bar"><span class="title">Skul 정리</span><div class="search frame g11">아이템, 스컬, 각인 이름<span class="key px2">/</span></div></div>
+    <div class="tabs g11"><span class="px2">전체<b>339</b></span><span class="px2">스컬<b>45</b></span><span class="on px2">아이템<b>258</b></span><span class="px2">각인<b>36</b></span></div>
+    <div class="sec">일반 18</div>
+    <div class="grid" style="--g: var(--common)">
+      <div class="tile frame"><span class="slot">데</span><span class="tname">그림자 정령 데스</span><span class="tengs g11"><span class="px2">동화</span><span class="px2">난투</span></span></div>
+      <div class="tile frame"><span class="slot">십</span><span class="tname">낡은 십자가</span><span class="tengs g11"><span class="px2">성물</span><span class="px2">현기증</span></span></div>
+      <div class="tile frame"><span class="slot">팬</span><span class="tname">독극물 팬던트</span><span class="tengs g11"><span class="px2">가보</span><span class="px2">독살</span></span></div>
+      <div class="tile frame"><span class="slot">톱</span><span class="tname">마공학 톱니바퀴</span><span class="tengs g11"><span class="px2">마공학</span><span class="px2">방화</span></span></div>
+      <div class="tile frame"><span class="slot">씨</span><span class="tname">미지의 씨앗</span><span class="tengs g11"><span class="px2">고대의 힘</span><span class="px2">마나 순환</span></span></div>
+      <div class="tile frame"><span class="slot">반</span><span class="tname">바람의 반지</span><span class="tengs g11"><span class="px2">가보</span><span class="px2">비상</span></span></div>
+      <div class="tile frame"><span class="slot">결</span><span class="tname">버려진 결혼반지</span><span class="tengs g11"><span class="px2">가보</span><span class="px2">절대영도</span></span></div>
+      <div class="tile frame"><span class="slot">갑</span><span class="tname">보급형 칼레온 갑옷</span><span class="tengs g11"><span class="px2">전리품</span><span class="px2">요새</span></span></div>
+      <div class="tile frame"><span class="slot">검</span><span class="tname">보급형 칼레온 검</span><span class="tengs g11"><span class="px2">전리품</span><span class="px2">용기</span></span></div>
+      <div class="tile frame"><span class="slot">스</span><span class="tname">보급형 칼레온 스태프</span><span class="tengs g11"><span class="px2">전리품</span><span class="px2">지혜</span></span></div>
+      <div class="tile frame"><span class="slot">활</span><span class="tname">보급형 칼레온 활</span><span class="tengs g11"><span class="px2">전리품</span><span class="px2">강타</span></span></div>
+      <div class="tile frame"><span class="slot">단</span><span class="tname">부서진 단검</span><span class="tengs g11"><span class="px2">암기</span><span class="px2">과다출혈</span></span></div>
+      <div class="tile frame"><span class="slot">파</span><span class="tname">빛 바랜 마석 파편</span><span class="tengs g11"><span class="px2">골동품</span><span class="px2">복수</span></span></div>
+      <div class="tile frame"><span class="slot">기</span><span class="tname">식전 기도문</span><span class="tengs g11"><span class="px2">성물</span><span class="px2">마나 순환</span></span></div>
+      <div class="tile frame"><span class="slot">뿌</span><span class="tname">원기회복의 뿌리</span><span class="tengs g11"><span class="px2">복수</span><span class="px2">돌연변이</span></span></div>
+      <div class="tile frame on"><span class="slot">계</span><span class="tname">칼레온 계급장</span><span class="tengs g11"><span class="px2">전리품</span><span class="px2">보물</span></span></div>
+    </div>
+    <div class="dim"></div>
+    <div class="detail pop">
+      <span class="close g11 px2">Esc 닫기</span>
+      <div class="top"><span class="slot" style="--g: var(--common)">계</span><div><div class="kind g11">아이템</div><h4>칼레온 계급장 <span class="badge g11">일반</span></h4></div></div>
+      <p class="desc">맵 이동 시 보유한 칼레온 아이템 1개당 30골드를 획득합니다. 대상: 칼레온 계급장, 보급형 칼레온 갑옷·검·스태프·활. 계급장 자체도 포함됩니다.</p>
+      <h5>각인 효과</h5>
+      <div class="tier"><div class="tn">전리품 <span>개조 가능</span></div><table>
+        <tr><td>2개</td><td>교대 시 지면에 칼레온의 깃발을 꽂습니다. 깃발 주변에 있을 시 물리공격력 및 마법공격력이 35% 증가합니다.</td></tr>
+        <tr class="mod"><td>2개 개조</td><td>깃발 아래에서 공격력 20% 증폭. 물리공격력과 마법공격력 중 높은 쪽의 공격력을 기반으로 총공세를 가함.</td></tr></table></div>
+      <div class="tier"><div class="tn">보물 <span>개조 가능</span></div><table>
+        <tr><td>2개</td><td>전투 중 보물을 가진 적을 발견할 수 있습니다.</td></tr>
+        <tr><td>4개</td><td>이 각인의 효과로 발견할 수 있는 보물상자에서 얻을 수 있는 보상의 종류가 늘어납니다.</td></tr>
+        <tr class="mod"><td>4개 개조</td><td>보유한 보물 각인 효과 1개당 적에게 입히는 데미지가 5% 증폭됩니다. 이 효과가 활성화시 황금왕의 상자가 나타납니다.</td></tr></table></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

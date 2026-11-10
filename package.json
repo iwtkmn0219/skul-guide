@@ -5,6 +5,7 @@
   "scripts": {
     "test": "node --test",
     "test:tools": "python -X utf8 -m unittest discover -s tools -p test_*.py",
-    "build:items": "python -X utf8 tools/convert_items.py data/Skul_아이템_각인_DB형.xlsx --retrieved 2026-11-10 --out public/js/items.js"
+    "build:items": "python -X utf8 tools/convert_items.py data/Skul_아이템_각인_DB형.xlsx --retrieved 2026-11-10 --out public/js/items.js",
+    "build:fonts": "python -X utf8 tools/subset_fonts.py --src sources/galmuri --public public --chars-out tools/font-chars.txt"
   }
 }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안: castle</title>
+<link rel="stylesheet" href="frame.css">
+<script>function toggleSelect(el){el.classList.toggle("selected")}</script>
+</head>
+<body>
+<style>
+  @font-face { font-family: "Galmuri11"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri11"; font-weight: 700; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Galmuri14"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri14.woff2") format("woff2"); font-display: swap; }
+
+  .cards .card-image { aspect-ratio: auto; display: block; padding: 0; background: none; }
+  .demo { position: relative; padding: 0 16px 20px; min-height: 330px; overflow: hidden; color: #f4eeff; font-family: system-ui, "Segoe UI", "Malgun Gothic", sans-serif; line-height: 1.5; word-break: keep-all; text-align: left; }
+  .demo .pf { font-family: "Galmuri11", system-ui, sans-serif; letter-spacing: 0; }
+  .demo .top { display: flex; align-items: center; gap: 10px; margin: 0 -16px 14px; padding: 14px 16px; }
+  .demo .top .title { font-size: 22px; font-weight: 700; color: #f3ead6; text-shadow: 2px 2px 0 #000; }
+  .demo .frame { margin: 3px; box-shadow: 0 -3px 0 0 #8e6fd0, 0 3px 0 0 #8e6fd0, -3px 0 0 0 #8e6fd0, 3px 0 0 0 #8e6fd0; }
+  .demo .search { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; margin-bottom: 8px; background: #140924; font-size: .95rem; }
+  .demo .search .ico { opacity: .7; font-size: .85rem; }
+  .demo .caret { display: inline-block; width: 2px; height: 1.1em; margin-left: -6px; background: #ff8a4c; }
+  .demo .count { margin: 14px 0 8px; color: #c9b6ea; font-size: .78rem; }
+  .demo .count.pf { font-size: 11px; }
+  .demo .res { padding: 12px 14px; background: #21123a; }
+  .demo .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .demo .name { flex: 1 1 auto; font-size: 1.02rem; font-weight: 800; }
+  .demo .name.pf { font-size: 16px; font-weight: 700; }
+  .demo .grade { padding: 1px 7px; background: #f0b552; color: #1b1308; font-size: .72rem; font-weight: 700; }
+  .demo .grade.pf { font-size: 11px; padding: 2px 6px; }
+  .demo .chips { display: flex; gap: 6px; margin: 8px 0; }
+  .demo .chips span { margin: 2px; padding: 2px 10px; background: #34205a; color: #f0e6ff; font-size: .8rem; font-weight: 600; box-shadow: 0 -2px 0 0 #6d55a3, 0 2px 0 0 #6d55a3, -2px 0 0 0 #6d55a3, 2px 0 0 0 #6d55a3; }
+  .demo .chips.pf span { font-size: 11px; font-weight: 400; padding: 3px 9px; }
+  .demo .desc { margin: 0; color: #e2d6f5; font-size: .9rem; }
+  .demo .desc.pf14 { font-family: "Galmuri14", system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+  .demo mark { background: none; color: inherit; text-decoration: underline 2px #ff8a4c; text-underline-offset: 4px; }
+
+  /* 픽셀 횃불 (3px 한 칸) */
+  .torch { position: relative; flex: none; width: 9px; height: 18px; }
+  .torch::before { content: ""; position: absolute; left: 0; top: 0; width: 3px; height: 3px;
+    box-shadow: 3px 0 #ffd36b, 0 3px #ff8a3c, 3px 3px #ffe9a8, 6px 3px #ff8a3c, 0 6px #ff5a2a, 3px 6px #ffb347, 6px 6px #ff5a2a,
+                3px 9px #7a5330, 3px 12px #5c3d22, 3px 15px #3f2915;
+    filter: drop-shadow(0 0 5px rgba(255,140,60,.9)); }
+  @media (prefers-reduced-motion: no-preference) { .torch::before { animation: flick .6s steps(2) infinite; } }
+  @keyframes flick { 50% { filter: drop-shadow(0 0 8px rgba(255,160,70,.95)); transform: translateY(-1px); } }
+
+  /* 돌벽 무늬 (CSS 안에 넣는 SVG, 32px 타일) */
+  .bricks { background-color: #24143a; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+
+  /* 1. 은은하게: 위쪽 띠만 돌벽 + 횃불, 아래는 C 그대로 */
+  .c1 { background: radial-gradient(120% 90% at 85% 0%, #5e2a9c 0%, #2c1250 40%, #150a24 78%); }
+  .c1 .top { border-bottom: 3px solid #0d0716; box-shadow: inset 0 -6px 0 rgba(0,0,0,.3); }
+  .c1 .top.bricks { background-image: radial-gradient(60% 140% at 100% 50%, rgba(255,140,60,.28), transparent 70%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+  .c1 .top .torch { margin-left: auto; margin-right: 6px; }
+
+  /* 2·3. 진하게: 바탕 전체 돌벽 + 양쪽 횃불 빛, 정보 칸은 단단한 판 */
+  .c2 { background-image: radial-gradient(45% 35% at 0% 6%, rgba(255,130,50,.30), transparent 70%), radial-gradient(45% 35% at 100% 6%, rgba(255,130,50,.30), transparent 70%), linear-gradient(rgba(10,4,20,.25), rgba(10,4,20,.65)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E"); background-color: #24143a; }
+  .c2 .top { justify-content: center; }
+  .c2 .search { background: #0e0619; }
+  .c2 .res { background: #1b0f2e; }
+  .c2 .count { color: #d6c6f0; }
+</style>
+
+<h2>마왕성 느낌과 픽셀 글꼴을 얼마나 넣을까요?</h2>
+<p class="subtitle">C에 돌벽과 횃불(마왕성 느낌), 픽셀 글꼴을 더했습니다. 넣는 정도만 다르게 해서 세 가지로 만들었습니다. 글꼴은 무료 픽셀 글꼴 "갈무리"이고, 미리보기용으로 인터넷에서 불러왔습니다.</p>
+
+<div class="cards">
+  <div class="card" data-choice="c1" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo c1">
+        <div class="top bricks"><span class="title pf">Skul 정리</span><span class="torch" aria-hidden="true"></span></div>
+        <div class="search frame"><span class="ico">⌕</span><span>까마귀</span><span class="caret"></span></div>
+        <p class="count">결과 1개 · 아이템</p>
+        <div class="res frame">
+          <div class="head"><span class="name"><mark>까마귀</mark> 군주의 깃털</span><span class="grade pf">레전더리</span></div>
+          <div class="chips"><span>고대의 힘</span><span>돌연변이</span></div>
+          <p class="desc">교대 시 주변 적들에게 마법데미지를 입히고 소용돌이의 중심으로 끌어당깁니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>1. 은은하게</h3>
+      <p>맨 위 띠에만 돌벽과 횃불을 둡니다. 픽셀 글꼴은 사이트 제목과 등급 표시에만 씁니다. 나머지는 C와 같습니다.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c2" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo c2">
+        <div class="top"><span class="torch" aria-hidden="true"></span><span class="title pf">Skul 정리</span><span class="torch" aria-hidden="true"></span></div>
+        <div class="search frame"><span class="ico">⌕</span><span>까마귀</span><span class="caret"></span></div>
+        <p class="count pf">결과 1개 · 아이템</p>
+        <div class="res frame">
+          <div class="head"><span class="name pf"><mark>까마귀</mark> 군주의 깃털</span><span class="grade pf">레전더리</span></div>
+          <div class="chips pf"><span>고대의 힘</span><span>돌연변이</span></div>
+          <p class="desc">교대 시 주변 적들에게 마법데미지를 입히고 소용돌이의 중심으로 끌어당깁니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>2. 진하게</h3>
+      <p>바탕 전체를 어두운 돌벽으로 깔고, 양쪽 위에서 횃불 빛이 들어옵니다. 제목, 이름, 각인, 라벨까지 픽셀 글꼴이고 설명 글만 일반 글꼴입니다.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c3" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo c2">
+        <div class="top"><span class="torch" aria-hidden="true"></span><span class="title pf">Skul 정리</span><span class="torch" aria-hidden="true"></span></div>
+        <div class="search frame pf"><span class="ico">⌕</span><span>까마귀</span><span class="caret"></span></div>
+        <p class="count pf">결과 1개 · 아이템</p>
+        <div class="res frame">
+          <div class="head"><span class="name pf"><mark>까마귀</mark> 군주의 깃털</span><span class="grade pf">레전더리</span></div>
+          <div class="chips pf"><span>고대의 힘</span><span>돌연변이</span></div>
+          <p class="desc pf14">교대 시 주변 적들에게 마법데미지를 입히고 소용돌이의 중심으로 끌어당깁니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>3. 설명 글까지 픽셀</h3>
+      <p>2와 같고, 설명 글까지 픽셀 글꼴로 씁니다. 게임 느낌은 가장 강합니다. 긴 글이 얼마나 잘 읽히는지 비교해 보시라고 넣었습니다.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
