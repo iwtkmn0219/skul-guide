@@ -119,15 +119,24 @@ npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라�
 - 그 밖의 코드(`public/js/skills.js`, `public/js/items.js` 제외)는 위 라이선스와 별개입니다.
 - 게임 관련 권리는 SouthPAW Games에 있습니다.
 
-## 배포 (Cloudflare Pages 무료 플랜)
+## 배포 (Cloudflare Workers 정적 자산)
 
-**대시보드 Git 연동:** 저장소를 연결하고 빌드 명령은 비워 두며, 출력 디렉터리는 `public`으로 설정합니다.
-이 방식은 저장소 내용만 배포하므로 `.gitignore`에 있는 `public/skills/img/`는 올라가지 않습니다. 이미지를 쓰려면 아래 CLI 배포를 쓰세요.
+사이트는 Cloudflare Workers의 `skul-guide` Worker에 정적 자산으로 올라가 있습니다. Worker 코드는 없고 `public/` 폴더만 배포합니다.
 
-**CLI:**
+- 주소: <https://skul-guide.iwtkmn0219.workers.dev/>
+- GitHub 연동(자동 빌드)은 쓰지 않습니다. 커밋하거나 푸시해도 자동으로 배포되지 않으므로, 아래 명령으로 직접 배포합니다.
 
 ```bash
-npx wrangler pages deploy public --project-name skul-skill-guide
+npx wrangler login   # 처음 한 번
+npx wrangler deploy --name skul-guide --assets public --compatibility-date 2026-11-04
 ```
 
-`public/_headers`가 `/js/*`, `/css/*`에 짧은 캐시(`max-age=300`)를 지정합니다.
+- `--compatibility-date`는 기존 Worker 설정과 같은 값입니다.
+- `public/_headers`가 `/js/*`, `/css/*`에 짧은 캐시(`max-age=300`)를 지정합니다.
+- `/skills`처럼 끝에 `/`가 없는 주소는 `/skills/`로 자동으로 옮겨 갑니다.
+- 로컬의 `public/skills/img/`에 이미지를 넣어 두었다면 이 명령으로 함께 올라갑니다(`.gitignore`에 있어 저장소에는 올라가지 않음).
+
+배포한 뒤에는 다음을 확인합니다.
+
+- `/`, `/skills/`, `/items/`가 열린다.
+- `/data/…xlsx`, `/tools/…`, `/package.json`은 404다.
