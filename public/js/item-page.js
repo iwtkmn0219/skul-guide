@@ -107,7 +107,9 @@ queryInput.addEventListener('input', () => update({ query: queryInput.value }));
 list.addEventListener('click', e => {
   const engButton = e.target.closest('.chip.eng, .show-items');
   if (engButton) {
-    update({ view: 'items', eng: engButton.dataset.eng, grade: 'all' });
+    // "아이템 N개 보기"는 개수를 약속하므로 검색어를 지운다. 각인 검색어(효과 문구)는 아이템 검색에서 맞지 않을 수 있다.
+    const query = engButton.matches('.show-items') ? { query: '' } : {};
+    update({ view: 'items', eng: engButton.dataset.eng, grade: 'all', ...query });
     window.scrollTo({ top: 0 });
     return;
   }
