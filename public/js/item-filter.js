@@ -20,25 +20,6 @@ export function matchesItemQuery(item, query) {
   return matches([item.name, ...item.engravings, ...item.description], query);
 }
 
-/** @param {Item[]} items @param {{ grade: string, eng: string, query: string }} state @returns {Item[]} */
-export function filterItems(items, { grade, eng, query }) {
-  return items.filter(i =>
-    (grade === 'all' || i.grade === grade) &&
-    (!eng || i.engravings.includes(eng)) &&
-    matchesItemQuery(i, query));
-}
-
-/** 각인 이름 → 그 각인을 가진 아이템 수. 같은 각인이 두 번 붙어도 1개로 세고, 랜덤 각인은 세지 않는다. */
-export function itemCountByEngraving(items) {
-  const counts = new Map();
-  for (const item of items) {
-    for (const name of new Set(item.engravings)) {
-      if (!isRandomEngraving(name)) counts.set(name, (counts.get(name) ?? 0) + 1);
-    }
-  }
-  return counts;
-}
-
 /** baseName의 강화·변환형 아이템 이름들. */
 export function variantsOf(items, baseName) {
   return items.filter(i => i.variantOf === baseName).map(i => i.name);

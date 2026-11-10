@@ -3,48 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>아이템 · 각인 도감</title>
-  <meta name="description" content="Skul: The Hero Slayer 아이템 258종과 각인 36종의 효과를 등급·각인별로 검색하는 비공식 도감">
+  <meta name="robots" content="noindex">
+  <title>Skul: The Hero Slayer 정리</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/items.css">
-  <script type="module" src="../js/item-page.js"></script>
+  <script type="module">
+    import { fromItemsPage, toAppHash } from '../js/app-state.js';
+    location.replace('../' + toAppHash(fromItemsPage(location.hash)));
+  </script>
 </head>
-<body>
-  <nav class="site-nav" aria-label="사이트">
-    <a href="../">홈</a>
-    <a href="../skills/">스킬 추천</a>
-    <a href="./" aria-current="page">아이템·각인</a>
-  </nav>
-
-  <header class="site"><h1>아이템 · 각인 도감</h1><p class="source" id="items-source"></p></header>
-
-  <nav class="controls" aria-label="필터">
-    <div class="row search">
-      <input id="q" type="search" placeholder="아이템·각인 이름 또는 효과 검색" aria-label="검색" autocomplete="off">
-      <span id="count" aria-live="polite"></span>
-    </div>
-    <div class="row">
-      <div class="tabs views" role="group" aria-label="보기">
-        <button type="button" data-view="items">아이템</button>
-        <button type="button" data-view="engravings">각인</button>
-      </div>
-    </div>
-    <div class="row item-filters">
-      <div class="tabs grades" role="group" aria-label="등급">
-        <button type="button" data-grade="all">전체<span class="n"></span></button>
-      </div>
-      <select id="eng" aria-label="각인">
-        <option value="">각인: 전체</option>
-      </select>
-    </div>
-  </nav>
-
-  <main id="list"></main>
-
-  <footer class="site">
-    <p>비공식 팬 정리 페이지입니다. Skul: The Hero Slayer 관련 권리는 SouthPAW Games에 있습니다.</p>
-    <div id="items-credit"></div>
-  </footer>
-</body>
+<body><p>새 주소로 옮겼습니다: <a href="../#tab=items">Skul 정리</a></p></body>
 </html>

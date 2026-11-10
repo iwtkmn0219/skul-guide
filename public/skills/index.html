@@ -3,49 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>스컬별 스킬 추천</title>
-  <meta name="description" content="스컬: 더 히어로 슬레이어 스컬 45종의 추천 스킬 조합을 등급별로 검색하고 필터링하는 정리 페이지">
+  <meta name="robots" content="noindex">
+  <title>Skul: The Hero Slayer 정리</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="../css/style.css">
-  <script type="module" src="../js/skill-page.js"></script>
+  <script type="module">
+    import { fromSkillsPage, toAppHash } from '../js/app-state.js';
+    location.replace('../' + toAppHash(fromSkillsPage(location.hash)));
+  </script>
 </head>
-<body>
-  <nav class="site-nav" aria-label="사이트">
-    <a href="../">홈</a>
-    <a href="./" aria-current="page">스킬 추천</a>
-    <a href="../items/">아이템·각인</a>
-  </nav>
-
-  <header class="site">
-    <h1>스컬별 스킬 추천</h1>
-    <p class="headline" id="headline"></p>
-    <p class="source" id="source"></p>
-    <p class="legend"><span class="mark">★</span> <span class="mark">◆</span> 원문 작성자가 스컬 이름에 붙인 표기입니다. 뜻은 원문에 적혀 있지 않습니다.</p>
-  </header>
-
-  <nav class="controls" aria-label="필터">
-    <div class="row search">
-      <input id="q" type="search" placeholder="스컬 또는 스킬 이름 검색" aria-label="검색" autocomplete="off">
-      <span id="count" aria-live="polite"></span>
-    </div>
-    <div class="row">
-      <div class="tabs" role="group" aria-label="등급">
-        <button type="button" data-grade="all">전체<span class="n"></span></button>
-      </div>
-      <div class="marks" role="group" aria-label="원문 표기">
-        <button type="button" data-mark="★" aria-pressed="false" title="원문 표기 ★만 보기">★</button>
-        <button type="button" data-mark="◆" aria-pressed="false" title="원문 표기 ◆만 보기">◆</button>
-      </div>
-    </div>
-  </nav>
-
-  <main id="list"></main>
-
-  <dialog id="skill-dialog" class="skill-sheet" aria-labelledby="sheet-title"></dialog>
-
-  <footer class="site">
-    <p>비공식 팬 정리 페이지입니다. 내용 출처는 위 원문이며, Skul: The Hero Slayer 관련 권리는 SouthPAW Games에 있습니다.</p>
-    <p id="namu-credit"></p>
-  </footer>
-</body>
+<body><p>새 주소로 옮겼습니다: <a href="../#tab=skulls">Skul 정리</a></p></body>
 </html>

@@ -1,10 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SKULLS } from '../public/js/data.js';
-import { normalize, filterSkulls } from '../public/js/filter.js';
-import { DEFAULT_STATE } from '../public/js/state.js';
+import { normalize, matchesQuery } from '../public/js/filter.js';
 
-const q = query => filterSkulls(SKULLS, { ...DEFAULT_STATE, query }).map(s => s.id);
+const q = query => SKULLS.filter(s => matchesQuery(s, query)).map(s => s.id);
 
 test('normalize lowercases and strips spaces, hyphens, middle dots', () => {
   assert.equal(normalize('스켈레톤 - 검 '), '스켈레톤검');
@@ -27,13 +26,6 @@ test('pool skill names are searched', () => {
 });
 test('build slot options are searched', () => {
   assert.ok(q('사냥').includes('werewolf'));
-});
-test('grade and mark filters keep original order', () => {
-  const unique = filterSkulls(SKULLS, { ...DEFAULT_STATE, grade: 'unique' });
-  assert.equal(unique.length, 10);
-  assert.equal(unique[0].id, 'rock-star');
-  assert.equal(filterSkulls(SKULLS, { ...DEFAULT_STATE, mark: '★' }).length, 5);
-  assert.deepEqual(filterSkulls(SKULLS, { ...DEFAULT_STATE, grade: 'legendary', mark: '◆' }).map(s => s.id), ['davy-jones', 'dominator']);
 });
 test('namu skill and swap names are searched', () => {
   assert.deepEqual(q('환영교차'), ['ninja']);

@@ -1,20 +1,28 @@
 # Skul: The Hero Slayer 정리
 
-스컬: 더 히어로 슬레이어(Skul: The Hero Slayer) 비공식 팬 정리 사이트입니다. 세 페이지로 되어 있습니다.
+스컬: 더 히어로 슬레이어(Skul: The Hero Slayer) 비공식 팬 정리 사이트입니다. 사이트는 `/` 한 화면입니다.
 
-- `/`: 허브(메인 홈페이지). 두 페이지로 가는 카드와 출처 요약.
-- `/skills/`: 스컬별 스킬 추천.
-- `/items/`: 아이템·각인 도감. 아이템 258종과 각인 36종을 등급·각인·검색어로 찾고, 각인 단계별 효과를 봅니다(예: `/items/#grade=legendary&eng=보물`).
+- 검색창 하나로 스컬 45종, 아이템 258종, 각인 36종을 한 번에 찾습니다. 스컬은 이름과 스킬, 아이템은 이름·각인·설명, 각인은 이름과 효과를 찾습니다.
+- 탭 "전체 · 스컬 · 아이템 · 각인"마다 결과 수가 붙습니다. 스컬과 각인은 목록, 아이템은 같은 크기 칸의 격자로 보이고, 고르면 오른쪽(휴대폰은 화면 전체)에 상세가 나옵니다.
+- 스컬 상세에는 추천 빌드와 각성 단계별 스킬 정보(나무위키)가, 아이템 상세에는 각인 단계별 효과가, 각인 상세에는 그 각인이 붙은 아이템이 나옵니다.
+- 키보드: 열면 검색창에 커서가 있습니다(데스크톱). `/` 검색창으로, `↑` `↓` 목록 이동(격자는 `←` `→`도), `Esc` 검색어 지우기(휴대폰 상세에서는 목록으로).
+- ★ = 신화 DLC, ◆ = 마석으로 해금되는 스컬입니다. 스컬 탭에서 "★ 신화 DLC", "◆ 마석 해금"으로 거를 수 있습니다. DLC 아이템도 신화 DLC라 같은 ★ 표시를 씁니다.
 
-스킬 추천 페이지는 스컬 45종 추천 스킬 조합을 등급 탭·원문 표기(★/◆)·검색으로 볼 수 있게 정리한 정적 페이지입니다.
-카드마다 그 스컬의 스킬 전체(나무위키)를 칩으로 보여 주고 추천 스킬은 ★로 강조하며, `스킬 정보`를 펼치면 각성 단계별 패시브·교대·쿨타임·효과를 볼 수 있습니다.
+스킬 추천 원문:
 
-- 원문: [디시인사이드 스컬 마이너 갤러리 「스컬별 스킬 추천」](https://gall.dcinside.com/mgallery/board/view/?id=skul&no=57295)
+- [디시인사이드 스컬 마이너 갤러리 「스컬별 스킬 추천」](https://gall.dcinside.com/mgallery/board/view/?id=skul&no=57295)
 - 작성자: 정도 (수정 25.02.05, 26.01.26)
 - 비공식 팬 정리 페이지이며, 게임 관련 권리는 SouthPAW Games에 있습니다.
 
-사이트 루트(`/`)는 허브이고, 스킬 추천 페이지는 `/skills/`에 있습니다. 필터 상태는 주소 해시에 저장되므로 링크로 공유할 수 있습니다. 예: `/skills/#grade=unique&q=죄수`
-예전 루트 주소(`/#grade=…`, `/#skull=…`)로 들어오면 `/skills/#…`로 자동으로 옮겨 갑니다.
+### 주소
+
+탭, 검색어, ★/◆ 거르기, 고른 항목을 주소 해시에 담습니다. 그래서 링크로 공유하거나 새로고침해도 같은 화면이 나옵니다.
+
+- 형식: `/#tab=items&q=칼레온&sel=item:칼레온 계급장` (`tab`은 `all`·`skulls`·`items`·`engravings`, `mark`는 `★`·`◆`, `sel`은 `skull:{id}`·`item:{이름}`·`eng:{이름}`)
+- 예전 주소도 새 화면으로 옮겨집니다.
+  - `/skills/#grade=…&mark=…&q=…&skull=…` → 스컬 탭(검색어, ★/◆, 고른 스컬 유지. `grade`는 버림)
+  - `/items/#view=…&grade=…&eng=…&q=…` → 아이템 탭 또는 각인 탭. `eng`가 있으면 그 각인을 고른 상태로 엶(`grade`는 버림)
+  - 루트 시절 해시(`/#grade=…`, `/#skull=…` 등 `tab`이 없는 해시) → 스컬 탭
 
 ## 로컬 실행
 
@@ -32,42 +40,47 @@ Node 20 이상이 필요하며 의존성 설치는 필요 없습니다.
 
 ```bash
 npm test             # 사이트 모듈(public/js) 테스트
-npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라이브러리만)
+npm run test:tools   # 개발 도구(나무위키 추출기, 엑셀 변환기, 글꼴 서브셋) 테스트(Python 3.12, 표준 라이브러리만)
 ```
 
 ## 구조
 
 | 파일 | 역할 |
 |---|---|
-| `public/index.html`, `public/css/home.css` | 허브(메인 홈페이지) |
-| `public/skills/index.html` | 스킬 추천 페이지 |
-| `public/js/common.js` | 페이지 공용 함수(`escapeHtml`, `normalize`) |
-| `public/js/legacy-redirect.js` | 옛 루트 해시 → `/skills/` 주소 계산 |
-| `public/items/index.html`, `public/css/items.css` | 아이템·각인 도감 페이지 |
-| `public/js/items.js` | 엑셀에서 생성한 도감 데이터(`ITEMS_META`, `ITEM_GRADES`, `ENGRAVING_CATEGORIES`, `ITEMS`, `ENGRAVINGS`) — 손으로 고치지 않음 |
-| `public/js/item-filter.js`, `item-state.js`, `item-render.js`, `item-page.js` | 도감 검색·필터, 해시 상태, 카드 HTML, DOM 연결 |
-| `data/Skul_아이템_각인_DB형.xlsx` | 도감 원본 엑셀(커밋함, 배포 안 됨) |
-| `tools/convert_items.py` | 엑셀 → `items.js` 변환기(검증 포함, 개발용) |
-| `public/js/data.js` | 원문 전사 데이터(`GRADES`, `SOURCE`, `SKULLS`) |
-| `public/js/filter.js` | 검색 정규화, 필터링 |
-| `public/js/state.js` | URL 해시 ↔ 필터 상태 |
-| `public/js/render.js` | 카드 HTML 생성(이스케이프 포함) |
-| `public/js/skills.js` | 나무위키에서 생성한 스킬 정보(`NAMU`, `SKILL_INFO`) — 손으로 고치지 않음 |
+| `public/index.html` | 한 화면 앱 |
+| `public/css/base.css` | 색·글꼴 토큰, 갈무리 `@font-face`, 돌벽과 횃불, 픽셀 테두리, 머리 띠, 탭, 바닥 띠, 포커스 |
+| `public/css/app.css` | 두 칸 배치, 목록 줄, 아이템 격자, 상세, 스킬 정보, 단계 표, 휴대폰 배치 |
+| `public/fonts/` | 갈무리 서브셋(woff2)과 라이선스(`OFL.txt`) |
+| `public/js/app.js` | DOM 연결(검색, 탭, 선택, 키보드, history, 휴대폰 상세 덮개) |
+| `public/js/search.js` | 검색, 탭별 결과와 개수, 자동 선택, 상세 안 링크 이동 상태 |
+| `public/js/app-state.js` | 주소 해시와 화면 상태 변환, 예전 주소 변환(데이터를 불러오지 않음) |
+| `public/js/view-list.js`, `view-detail.js` | 목록·격자 HTML, 상세 HTML(이스케이프 포함) |
+| `public/js/keynav.js` | 방향키로 갈 다음 칸 계산 |
+| `public/js/images.js` | 그림 설정(`IMAGES`), 그림 자리 글자, 그림 경로 |
+| `public/js/common.js` | 공용 함수(`escapeHtml`, `normalize`, `highlight`) |
+| `public/js/filter.js`, `item-filter.js` | 스컬·아이템·각인 검색 일치 규칙, 강화·변환형 찾기 |
 | `public/js/skill-match.js` | 가이드 스킬 이름 ↔ 나무위키 스킬 이름 연결(정규화, 별칭) |
-| `public/js/skill-page.js` | 스킬 페이지 DOM 연결, 단계 탭 전환 |
+| `public/js/data.js` | 원문 전사 데이터(`GRADES`, `SOURCE`, `SKULLS`) |
+| `public/js/skills.js` | 나무위키에서 생성한 스킬 정보(`NAMU`, `SKILL_INFO`) — 손으로 고치지 않음 |
+| `public/js/items.js` | 엑셀에서 생성한 아이템·각인 데이터(`ITEMS_META`, `ITEM_GRADES`, `ENGRAVING_CATEGORIES`, `ITEMS`, `ENGRAVINGS`) — 손으로 고치지 않음 |
+| `public/skills/index.html`, `public/items/index.html` | 예전 주소를 새 화면으로 옮기는 페이지 |
+| `data/Skul_아이템_각인_DB형.xlsx` | 아이템·각인 원본 엑셀(커밋함, 배포 안 됨) |
+| `tools/convert_items.py` | 엑셀 → `items.js` 변환기(검증 포함, 개발용) |
+| `tools/extract_namu.py` | 저장한 나무위키 HTML → `skills.js` 생성기(개발용) |
+| `tools/subset_fonts.py`, `tools/font-chars.txt` | 글꼴 서브셋 도구와 남긴 글자 목록(개발용) |
 | `tests/` | 위 순수 모듈 테스트 |
-| `tools/extract_namu.py` | 저장한 나무위키 HTML → `skills.js` 생성기(개발용, 배포 안 됨) |
 
 배포되는 것은 `public/` 폴더뿐입니다.
 
-## 이미지 넣기(선택)
+## 그림 넣기(선택)
 
-디시인사이드 이미지는 핫링크하지 않습니다. 초상화를 표시하려면:
+게임 그림은 저장소에 넣지 않고, 디시인사이드 이미지도 핫링크하지 않습니다. 지금은 아이템 그림 자리에 이름 마지막 낱말의 첫 글자를 등급 색으로 보여 줍니다. 그림을 보여 주려면:
 
-1. `public/skills/img/{id}.png` 파일을 넣습니다. `id` 목록은 `public/js/data.js`의 각 스컬 `id`(예: `skeleton-sword`, `prisoner`)를 참고합니다.
-2. `public/js/skill-page.js` 맨 위의 `IMAGES`를 `true`로 바꿉니다.
+1. 스컬 초상화는 `public/img/skulls/{id}.png`에 넣습니다. `id`는 `public/js/data.js`의 각 스컬 `id`(예: `skeleton-sword`, `prisoner`)입니다.
+2. 아이템 그림은 `public/img/items/{파일 이름}`에 넣습니다. 파일 이름은 아이템 이름에서 `\ / : * ? " < > |`를 빼고 공백을 하나로 줄인 뒤 `.png`를 붙입니다(`public/js/images.js`의 `itemImageFile`). 예: `영원의 뼈: 광란` → `영원의 뼈 광란.png`
+3. `public/js/images.js`의 `IMAGES`를 `true`로 바꿉니다.
 
-로드에 실패한 이미지는 자동으로 숨겨집니다. `public/skills/img/`는 `.gitignore`에 들어 있어 저장소에 올라가지 않습니다.
+불러오지 못한 그림은 자동으로 숨겨지고 글자가 보입니다. `public/img/`는 `.gitignore`에 들어 있어 저장소에 올라가지 않습니다.
 
 ## 데이터 갱신
 
@@ -150,10 +163,13 @@ npx wrangler deploy --name skul-guide --assets public --compatibility-date 2026-
 
 - `--compatibility-date`는 기존 Worker 설정과 같은 값입니다.
 - `public/_headers`가 `/js/*`, `/css/*`에 짧은 캐시(`max-age=300`)를 지정합니다.
+- `public/_headers`가 `/fonts/*`에 1주 캐시(`max-age=604800`)를 지정합니다.
 - `/skills`처럼 끝에 `/`가 없는 주소는 `/skills/`로 자동으로 옮겨 갑니다.
-- 로컬의 `public/skills/img/`에 이미지를 넣어 두었다면 이 명령으로 함께 올라갑니다(`.gitignore`에 있어 저장소에는 올라가지 않음).
+- 로컬의 `public/img/`에 그림을 넣어 두었다면 이 명령으로 함께 올라갑니다(`.gitignore`에 있어 저장소에는 올라가지 않음).
 
 배포한 뒤에는 다음을 확인합니다.
 
-- `/`, `/skills/`, `/items/`가 열린다.
-- `/data/…xlsx`, `/tools/…`, `/package.json`은 404다.
+- `/`가 열린다.
+- `/skills/#q=%EC%A3%84%EC%88%98`는 스컬 탭(검색어 `죄수`)으로, `/items/#eng=%EB%B3%B4%EB%AC%BC`는 각인 탭의 보물 상세로 옮겨진다.
+- `/fonts/Galmuri14.woff2`는 200이다.
+- `/data/…xlsx`, `/tools/…`, `/package.json`, `/sources/…`는 404다.

@@ -4,7 +4,6 @@ import { normalize } from './common.js';
 export { normalize } from './common.js';
 
 /** @typedef {import('./data.js').Skull} Skull */
-/** @typedef {import('./state.js').FilterState} FilterState */
 
 function searchTargets(skull) {
   return [
@@ -20,12 +19,4 @@ export function matchesQuery(skull, query) {
   const q = normalize(query);
   if (!q) return true;
   return searchTargets(skull).some(t => normalize(t).includes(q));
-}
-
-/** @param {Skull[]} skulls @param {FilterState} state @returns {Skull[]} */
-export function filterSkulls(skulls, state) {
-  return skulls.filter(s =>
-    (state.grade === 'all' || s.grade === state.grade) &&
-    (state.mark === 'all' || s.mark === state.mark) &&
-    matchesQuery(s, state.query));
 }
