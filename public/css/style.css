@@ -364,3 +364,17 @@ main { padding-top: 4px; padding-bottom: 24px; }
 
 footer.site { padding-bottom: 32px; color: var(--muted); font-size: .8rem; }
 footer.site p { margin: 0 0 6px; }
+
+/* 사이트 내비게이션: 모든 페이지 상단 */
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 16px 0;
+  font-size: .9rem;
+}
+.site-nav a { color: var(--muted); text-decoration: none; }
+.site-nav a:hover { color: var(--text); text-decoration: underline; }
+.site-nav a[aria-current="page"] { color: var(--accent); font-weight: 700; }

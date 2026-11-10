@@ -1,15 +1,12 @@
 import { GRADES } from './data.js';
 import { NAMU, SKILL_INFO } from './skills.js';
 import { ANY, isRecommended } from './skill-match.js';
-import { normalize } from './filter.js';
+import { escapeHtml, normalize } from './common.js';
+
+export { escapeHtml } from './common.js';
 
 /** @typedef {import('./data.js').Skull} Skull */
 
-const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-
-export function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ENTITIES[c]);
-}
 
 export const gradeLabel = id => GRADES.find(g => g.id === id)?.label ?? id;
 

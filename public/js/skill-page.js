@@ -4,7 +4,7 @@ import { DEFAULT_STATE, parseHash, toHash } from './state.js';
 import { escapeHtml, renderList, renderSkillDialog } from './render.js';
 import { NAMU, SKILL_INFO } from './skills.js';
 
-// public/img/{id}.png 를 넣은 뒤 true로 바꾸면 초상화를 표시한다.
+// public/skills/img/{id}.png 를 넣은 뒤 true로 바꾸면 초상화를 표시한다.
 const IMAGES = false;
 
 const FILTER_KEYS = ['grade', 'mark', 'query'];

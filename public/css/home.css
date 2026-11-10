@@ -1,0 +1,24 @@
+/* 허브(/) 전용 스타일. 공통 토큰과 컴포넌트는 style.css */
+
+.hub {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.hub-card {
+  display: block;
+  height: 100%;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+.hub-card:hover, .hub-card:focus-visible { border-color: var(--accent); }
+.hub-card h2 { margin: 0 0 6px; font-size: 1.2rem; color: var(--accent); }
+.hub-card p { margin: 0; color: var(--muted); }

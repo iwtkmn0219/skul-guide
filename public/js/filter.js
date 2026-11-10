@@ -1,12 +1,10 @@
 import { SKILL_INFO } from './skills.js';
+import { normalize } from './common.js';
+
+export { normalize } from './common.js';
 
 /** @typedef {import('./data.js').Skull} Skull */
 /** @typedef {import('./state.js').FilterState} FilterState */
-
-/** 검색 비교용: 소문자로 바꾸고 공백·`-`·`·`을 지운다. */
-export function normalize(text) {
-  return text.toLowerCase().replace(/[\s\-·]/g, '');
-}
 
 function searchTargets(skull) {
   return [

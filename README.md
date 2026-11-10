@@ -7,7 +7,8 @@
 - 작성자: 정도 (수정 25.02.05, 26.01.26)
 - 비공식 팬 정리 페이지이며, 게임 관련 권리는 SouthPAW Games에 있습니다.
 
-필터 상태는 주소 해시에 저장되므로 링크로 공유할 수 있습니다. 예: `#grade=unique&q=죄수`
+사이트 루트(`/`)는 허브이고, 스킬 추천 페이지는 `/skills/`에 있습니다. 필터 상태는 주소 해시에 저장되므로 링크로 공유할 수 있습니다. 예: `/skills/#grade=unique&q=죄수`
+예전 루트 주소(`/#grade=…`, `/#skull=…`)로 들어오면 `/skills/#…`로 자동으로 옮겨 갑니다.
 
 ## 로컬 실행
 
@@ -32,13 +33,17 @@ npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라�
 
 | 파일 | 역할 |
 |---|---|
+| `public/index.html`, `public/css/home.css` | 허브(메인 홈페이지) |
+| `public/skills/index.html` | 스킬 추천 페이지 |
+| `public/js/common.js` | 페이지 공용 함수(`escapeHtml`, `normalize`) |
+| `public/js/legacy-redirect.js` | 옛 루트 해시 → `/skills/` 주소 계산 |
 | `public/js/data.js` | 원문 전사 데이터(`GRADES`, `SOURCE`, `SKULLS`) |
 | `public/js/filter.js` | 검색 정규화, 필터링 |
 | `public/js/state.js` | URL 해시 ↔ 필터 상태 |
 | `public/js/render.js` | 카드 HTML 생성(이스케이프 포함) |
 | `public/js/skills.js` | 나무위키에서 생성한 스킬 정보(`NAMU`, `SKILL_INFO`) — 손으로 고치지 않음 |
 | `public/js/skill-match.js` | 가이드 스킬 이름 ↔ 나무위키 스킬 이름 연결(정규화, 별칭) |
-| `public/js/main.js` | DOM 이벤트 연결, 단계 탭 전환 |
+| `public/js/skill-page.js` | 스킬 페이지 DOM 연결, 단계 탭 전환 |
 | `tests/` | 위 순수 모듈 테스트 |
 | `tools/extract_namu.py` | 저장한 나무위키 HTML → `skills.js` 생성기(개발용, 배포 안 됨) |
 
@@ -48,10 +53,10 @@ npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라�
 
 디시인사이드 이미지는 핫링크하지 않습니다. 초상화를 표시하려면:
 
-1. `public/img/{id}.png` 파일을 넣습니다. `id` 목록은 `public/js/data.js`의 각 스컬 `id`(예: `skeleton-sword`, `prisoner`)를 참고합니다.
-2. `public/js/main.js` 맨 위의 `IMAGES`를 `true`로 바꿉니다.
+1. `public/skills/img/{id}.png` 파일을 넣습니다. `id` 목록은 `public/js/data.js`의 각 스컬 `id`(예: `skeleton-sword`, `prisoner`)를 참고합니다.
+2. `public/js/skill-page.js` 맨 위의 `IMAGES`를 `true`로 바꿉니다.
 
-로드에 실패한 이미지는 자동으로 숨겨집니다. `public/img/`는 `.gitignore`에 들어 있어 저장소에 올라가지 않습니다.
+로드에 실패한 이미지는 자동으로 숨겨집니다. `public/skills/img/`는 `.gitignore`에 들어 있어 저장소에 올라가지 않습니다.
 
 ## 데이터 갱신
 
@@ -87,7 +92,7 @@ npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라�
 ## 배포 (Cloudflare Pages 무료 플랜)
 
 **대시보드 Git 연동:** 저장소를 연결하고 빌드 명령은 비워 두며, 출력 디렉터리는 `public`으로 설정합니다.
-이 방식은 저장소 내용만 배포하므로 `.gitignore`에 있는 `public/img/`는 올라가지 않습니다. 이미지를 쓰려면 아래 CLI 배포를 쓰세요.
+이 방식은 저장소 내용만 배포하므로 `.gitignore`에 있는 `public/skills/img/`는 올라가지 않습니다. 이미지를 쓰려면 아래 CLI 배포를 쓰세요.
 
 **CLI:**
 
