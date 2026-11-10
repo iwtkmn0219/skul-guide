@@ -4,7 +4,8 @@ import { ITEMS_META } from './items.js';
 import { escapeHtml } from './common.js';
 import { IMAGES } from './images.js';
 import { parseAppHash, toAppHash } from './app-state.js';
-import { TABS, TAB_LABELS, search, tabEntries, tabCounts, lookup, jumpTo } from './search.js';
+import { TABS, TAB_LABELS, search, tabEntries, tabCounts, lookup, jumpTo, chooseSelection } from './search.js';
+import { nextIndex } from './keynav.js';
 import { renderResults } from './view-list.js';
 import { renderDetail } from './view-detail.js';
 
@@ -19,6 +20,7 @@ const detailEl = $('#detail');
 const detailPane = $('#detail-pane');
 
 const isKnownKey = key => lookup(key) !== null;
+const desktop = matchMedia('(min-width: 761px)');
 
 /** @type {import('./app-state.js').AppState} */
 let state = parseAppHash('', isKnownKey);
@@ -137,8 +139,28 @@ function onHistoryChange() {
   loadFromLocation();
 }
 
+/** 데스크톱에서 검색어·탭·거르기가 바뀌면 결과에 맞춰 고른다. 포커스는 옮기지 않는다. */
+function autoSelect(reason) {
+  const key = chooseSelection({
+    entries: tabEntries(currentResults(), state.tab, state.mark),
+    query: state.query,
+    remembered: remembered[state.tab],
+    reason,
+    auto: desktop.matches,
+  });
+  if (key !== state.sel) select(key);
+  if (key) entryEl(key)?.scrollIntoView({ block: 'nearest' });
+}
+
 function goToTab(tab) {
   update({ tab, sel: remembered[tab] });
+  autoSelect('tab');
+}
+
+/** 목록의 항목을 고르고 포커스를 준다. */
+function selectAndFocus(el) {
+  select(el.dataset.key);
+  el.focus();
 }
 
 // ── 단계 탭(스킬 정보) ──
@@ -170,7 +192,56 @@ function buildChrome() {
 
 buildChrome();
 
-queryInput.addEventListener('input', () => update({ query: queryInput.value }));
+queryInput.addEventListener('input', () => {
+  update({ query: queryInput.value });
+  autoSelect('query');
+});
+
+queryInput.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown') return;
+  const el = entryEl(state.sel) ?? resultsEl.querySelector('.entry');
+  if (!el) return;
+  e.preventDefault();
+  selectAndFocus(el);
+});
+
+resultsEl.addEventListener('keydown', e => {
+  if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key) || e.altKey || e.ctrlKey || e.metaKey) return;
+  const el = e.target.closest('.entry');
+  if (!el) return;
+  const entries = [...resultsEl.querySelectorAll('.entry')];
+  const current = entries.indexOf(el);
+  // 고른 항목이 목록에 없을 때 포커스가 있는 첫 항목에서는, 방향키가 먼저 그 항목을 고른다.
+  if (el.dataset.key !== state.sel && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+    e.preventDefault();
+    selectAndFocus(el);
+    return;
+  }
+  const boxes = entries.map(x => x.getBoundingClientRect());
+  const next = nextIndex(boxes, entries.map(x => x.classList.contains('cell')), current, e.key);
+  if (next >= 0) {
+    e.preventDefault();
+    selectAndFocus(entries[next]);
+  } else if (e.key === 'ArrowUp' && current === 0) {
+    e.preventDefault();
+    queryInput.focus();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+    const t = e.target;
+    if (t instanceof Element && (t.closest('input, textarea, select') || t.isContentEditable)) return;
+    e.preventDefault();
+    queryInput.focus();
+    queryInput.select();
+    return;
+  }
+  if (e.key === 'Escape' && state.query) {
+    e.preventDefault();
+    update({ query: '' });
+  }
+});
 
 tabsEl.addEventListener('click', e => {
   const button = e.target.closest('button[data-tab]');
@@ -179,7 +250,9 @@ tabsEl.addEventListener('click', e => {
 
 marksEl.addEventListener('click', e => {
   const button = e.target.closest('button[data-mark]');
-  if (button) update({ mark: state.mark === button.dataset.mark ? 'all' : button.dataset.mark });
+  if (!button) return;
+  update({ mark: state.mark === button.dataset.mark ? 'all' : button.dataset.mark });
+  autoSelect('tab');
 });
 
 resultsEl.addEventListener('click', e => {
@@ -216,5 +289,7 @@ window.addEventListener('popstate', onHistoryChange);
 window.addEventListener('hashchange', onHistoryChange);
 
 loadFromLocation();
+// 휴대폰은 화면 자판이 목록을 가리므로 처음에 검색창에 포커스를 주지 않는다.
+if (desktop.matches) queryInput.focus();
 // 처음 연 주소가 정규화와 다르면(예전 해시, 잘못된 값) 정리된 해시로 바꿔 둔다.
 writeHistory(false);
