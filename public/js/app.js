@@ -8,6 +8,8 @@ import { TABS, TAB_LABELS, search, tabEntries, tabCounts, lookup, jumpTo, choose
 import { nextIndex } from './keynav.js';
 import { renderResults } from './view-list.js';
 import { renderDetail } from './view-detail.js';
+import { createHistoryWriter } from './history-writer.js';
+import { keepFocus } from './focus-keep.js';
 
 const $ = sel => document.querySelector(sel);
 const queryInput = $('#q');
@@ -20,7 +22,8 @@ const detailEl = $('#detail');
 const detailPane = $('#detail-pane');
 
 const isKnownKey = key => lookup(key) !== null;
-const desktop = matchMedia('(min-width: 761px)');
+// CSS와 같은 경계(범위 문법이라 760과 761 사이 소수점 폭에도 빈틈이 없다)
+const desktop = matchMedia('(width > 760px)');
 
 /** @type {import('./app-state.js').AppState} */
 let state = parseAppHash('', isKnownKey);
@@ -29,11 +32,14 @@ const remembered = { all: '', skulls: '', items: '', engravings: '' };
 
 let results = search('');
 let resultsQuery = '';
-let listKey = null;     // 목록을 마지막으로 그린 tab|query|mark
-let detailKey = null;   // 상세를 마지막으로 그린 sel|query
+let listKey = null;      // 목록을 마지막으로 그린 [tab, query, mark]
+let detailKey = null;    // 상세를 마지막으로 그린 [sel, query]
+let detailSel = null;    // 상세를 마지막으로 그린 sel(바뀌면 상세 스크롤을 맨 위로)
 let historyToken = null; // 마지막으로 처리하거나 쓴 history 값
 
-const tokenNow = () => location.hash + '|' + JSON.stringify(history.state);
+// 비교 기준은 구분자 없는 JSON으로 만든다(검색어에 '|' 등이 있어도 섞이지 않게).
+const tokenNow = () => JSON.stringify([location.hash, history.state]);
+const writer = createHistoryWriter({ history, delay: 200, onWrite: () => { historyToken = tokenNow(); } });
 
 function entryEl(key) {
   return [...resultsEl.querySelectorAll('.entry')].find(el => el.dataset.key === key) ?? null;
@@ -41,11 +47,10 @@ function entryEl(key) {
 
 const hashUrl = () => toAppHash(state) || location.pathname + location.search;
 
-/** push면 한 칸 쌓는다(pushState의 상태는 pushedState). 아니면 지금 칸을 바꾼다. */
+/** push면 바로 한 칸 쌓는다(pushState의 상태는 pushedState). 아니면 지금 칸의 주소를 바꾼다(모아서 씀). */
 function writeHistory(push = false, pushedState = null) {
-  if (push) history.pushState(pushedState, '', hashUrl());
-  else history.replaceState(history.state, '', hashUrl());
-  historyToken = tokenNow();
+  if (push) writer.push(pushedState, hashUrl());
+  else writer.replace(hashUrl());
 }
 
 // ── 휴대폰 상세 덮개 ──
@@ -67,10 +72,10 @@ function setDetailOpen(open) {
 function openDetail(key) {
   state = { ...state, sel: key };
   remembered[state.tab] = state.sel;
-  history.replaceState(null, '', hashUrl());   // 돌아왔을 때 그 줄이 골라져 있도록
   syncSelectionMarks();
   renderDetailPane();
   detailPane.scrollTop = 0;
+  writer.replace(hashUrl(), null);   // 돌아왔을 때 그 줄이 골라져 있도록. 아래 push가 먼저 써 준다.
   writeHistory(true, { detail: 1 });
   setDetailOpen(true);
   $('#detail-title')?.focus({ preventScroll: true });
@@ -89,6 +94,7 @@ function closeDetail() {
 /** "◀ 목록"과 Esc: 상세를 연 뒤 쌓은 칸만큼 한 번에 돌아간다. */
 function backToList() {
   const depth = detailDepth();
+  writer.flush();
   if (depth > 0) history.go(-depth);
   else closeDetail();
 }
@@ -131,7 +137,7 @@ function renderControls() {
 }
 
 function renderList() {
-  const key = `${state.tab}|${state.query}|${state.mark}`;
+  const key = JSON.stringify([state.tab, state.query, state.mark]);
   if (key === listKey) {
     syncSelectionMarks();
     return;
@@ -143,35 +149,44 @@ function renderList() {
 }
 
 function renderDetailPane() {
-  const key = `${state.sel}|${state.query}`;
+  const key = JSON.stringify([state.sel, state.query]);
   if (key === detailKey) return;
-  const selChanged = !detailKey || detailKey.slice(0, detailKey.lastIndexOf('|')) !== state.sel;
+  const selChanged = detailSel !== state.sel;
   detailKey = key;
+  detailSel = state.sel;
   detailEl.innerHTML = renderDetail(lookup(state.sel), { query: state.query, images: IMAGES });
   if (selChanged) detailPane.scrollTop = 0;
 }
 
+/** 다시 그리기로 포커스가 있던 요소가 사라지면 목록은 고른 항목(없으면 첫 항목), 상세는 제목으로 돌려준다. */
+const FOCUS_REGIONS = [
+  { region: resultsEl, target: () => entryEl(state.sel) ?? resultsEl.querySelector('.entry') },
+  { region: detailEl, target: () => $('#detail-title') },
+];
+
 function render() {
-  renderControls();
-  renderList();
-  renderDetailPane();
+  keepFocus(FOCUS_REGIONS, () => document.activeElement, () => {
+    renderControls();
+    renderList();
+    renderDetailPane();
+  });
 }
 
 /** 상태를 바꾸고 해시를 쓰고 필요한 부분을 다시 그린다. */
 function update(patch, { push = false, pushedState = null } = {}) {
   state = { ...state, ...patch };
   remembered[state.tab] = state.sel;
+  render();   // 화면을 먼저 그리고 주소를 쓴다
   writeHistory(push, pushedState);
-  render();
 }
 
 /** 선택만 바꾼다. 목록은 다시 그리지 않는다. */
 function select(key) {
   state = { ...state, sel: key };
   remembered[state.tab] = state.sel;
-  writeHistory(false);
   syncSelectionMarks();
   renderDetailPane();
+  writeHistory(false);
 }
 
 function loadFromLocation() {
@@ -181,12 +196,18 @@ function loadFromLocation() {
   render();
   const wasOpen = document.body.classList.contains('detail-open');
   const open = detailDepth() >= 1;
-  if (wasOpen && !open && !desktop.matches) closeDetail();
-  else setDetailOpen(open);
+  if (wasOpen && !open && !desktop.matches) {
+    closeDetail();
+  } else {
+    setDetailOpen(open);
+    // 휴대폰에서 '앞으로'로 상세가 다시 열리면 덮개 안으로 포커스를 옮긴다(뒤쪽은 inert).
+    if (!wasOpen && open && !desktop.matches) $('#detail-title')?.focus({ preventScroll: true });
+  }
 }
 
 function onHistoryChange() {
   if (tokenNow() === historyToken) return;   // popstate와 hashchange가 같이 오거나, 스스로 쓴 history
+  writer.cancel();   // 다른 칸으로 왔으므로 이전 칸에 쓰려던 주소는 버린다
   loadFromLocation();
 }
 
@@ -350,6 +371,9 @@ $('.back').addEventListener('click', backToList);
 desktop.addEventListener('change', syncOverlay);
 
 window.addEventListener('popstate', onHistoryChange);
+// 떠나거나 숨겨질 때 대기 중인 주소를 바로 쓴다(새로고침·공유 시 최신 상태).
+window.addEventListener('pagehide', () => writer.flush());
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') writer.flush(); });
 window.addEventListener('hashchange', onHistoryChange);
 
 loadFromLocation();

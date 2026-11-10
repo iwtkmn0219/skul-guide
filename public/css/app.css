@@ -25,6 +25,7 @@
   font-size: 14px;
 }
 .kind-head .n, .sub .n { color: var(--muted); font-weight: 400; }
+.kind-head .n { font-size: 11px; }
 
 .sub {
   display: flex;
@@ -238,7 +239,7 @@ button.chip:hover { background: #45296f; }
   font-size: 11px;
 }
 .combo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-.combo .or, .combo .plus { color: var(--muted); font-family: var(--f11); padding: 0 2px; }
+.combo .or, .combo .plus { color: var(--muted); font-family: var(--f11); font-size: 11px; padding: 0 2px; }
 .notes { margin: 8px 0 0; padding-left: 18px; color: var(--text-2); }
 .notes li + li { margin-top: 2px; }
 #detail > .notes { margin-top: 12px; }
@@ -276,7 +277,7 @@ button.chip:hover { background: #45296f; }
 .back, .detail-foot { display: none; }
 
 /* ── 데스크톱: 화면 높이에 맞춘 앱형 배치. 목록과 상세가 각자 스크롤한다. ── */
-@media (min-width: 761px) {
+@media (width > 760px) {
   body {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
@@ -290,7 +291,7 @@ button.chip:hover { background: #45296f; }
 }
 
 /* ── 휴대폰(760px 이하): 목록이 화면 전체, 고르면 상세가 화면을 덮는다. ── */
-@media (max-width: 760px) {
+@media (width <= 760px) {
   .split { grid-template-columns: minmax(0, 1fr); padding: 0 12px 14px; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #detail-pane { display: none; }
@@ -324,6 +325,8 @@ button.chip:hover { background: #45296f; }
     text-align: left;
     cursor: pointer;
   }
+  /* 덮개 가장자리와 sticky 위치에서 잘리지 않게 포커스 고리를 버튼 안쪽에 그린다. */
+  .back:focus-visible { outline-offset: -5px; }
   #detail { padding-bottom: 16px; }
   .detail-foot { display: block; margin: 0 -13px; }
   .detail-foot footer.site { padding: 10px 14px 14px; }

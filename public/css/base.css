@@ -177,7 +177,7 @@ kbd {
   background: transparent;
   color: var(--text);
   caret-color: var(--acc);
-  font-family: var(--f11);
+  font-family: var(--f14);
   font-size: 14px;
 }
 .search input::placeholder { color: #a693c8; }
@@ -233,7 +233,7 @@ footer.site ul { margin: 6px 0; padding-left: 18px; }
 footer.site details p { margin: 0 0 4px; }
 
 /* ── 휴대폰(760px 이하): 머리 띠는 고정하지 않는다. 검색창은 다음 줄에서 전체 폭. ── */
-@media (max-width: 760px) {
+@media (width <= 760px) {
   .site-head { padding: 0 12px; }
   .bar { flex-wrap: wrap; gap: 10px; padding: 12px 0 8px; }
   .title { font-size: 16px; }
