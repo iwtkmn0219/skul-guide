@@ -1,0 +1,233 @@
+/* 기본: 토큰(스펙 7.1), 갈무리 글꼴(7.2), 픽셀 테두리(7.3), 돌벽과 횃불(7.4), 머리 띠, 탭, 바닥 띠, 포커스 */
+
+@font-face {
+  font-family: "Galmuri11";
+  src: url("../fonts/Galmuri11.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Galmuri11";
+  src: url("../fonts/Galmuri11-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Galmuri14";
+  src: url("../fonts/Galmuri14.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --wall: #24143a;
+  --panel: #1b0f2e;
+  --inset: #150a24;
+  --field: #0e0619;
+  --frame: #8e6fd0;
+  --frame-dim: #5b4a78;
+  --line: #2c1d45;
+  --text: #f4eeff;
+  --text-2: #e2d6f5;
+  --muted: #c9b6ea;
+  --bone: #f3ead6;
+  --acc: #ff8a4c;
+  --sel-bg: #3a1f12;
+  --mod-bg: #2d1a10;
+  --mod-text: #ffb98a;
+  --focus: #ffe9a8;
+  /* 등급 */
+  --common: #a3a3a3;
+  --rare: #6ea6f0;
+  --unique: #c08cf0;
+  --legendary: #f0b552;
+  --omen: #f08791;
+  /* 글꼴 */
+  --fallback: system-ui, "Malgun Gothic", sans-serif;
+  --f11: "Galmuri11", var(--fallback);
+  --f14: "Galmuri14", var(--fallback);
+}
+
+.grade-common { --g: var(--common); }
+.grade-rare { --g: var(--rare); }
+.grade-unique { --g: var(--unique); }
+.grade-legendary { --g: var(--legendary); }
+.grade-omen { --g: var(--omen); }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { background-color: var(--wall); }
+
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--f14);
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  background-color: var(--wall);
+  /* 양쪽 위 횃불 빛 두 개, 어둡게 하는 그라데이션, 32px 돌벽 타일 */
+  background-image:
+    radial-gradient(30% 30% at 0% 0%, rgba(255, 130, 50, .28), transparent 70%),
+    radial-gradient(30% 30% at 100% 0%, rgba(255, 130, 50, .28), transparent 70%),
+    linear-gradient(rgba(10, 4, 20, .3), rgba(10, 4, 20, .7)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%2324143a'/%3E%3Cg fill='%23120a1f'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='30' width='2' height='14'/%3E%3Crect x='14' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23321f4f'%3E%3Crect width='30' height='2'/%3E%3Crect x='16' y='16' width='14' height='2'/%3E%3Crect y='16' width='14' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+a { color: #e4d5ff; text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--text); }
+
+button { font: inherit; color: inherit; }
+
+h1, h2, h3, h4, p { margin: 0; }
+
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 픽셀 테두리: 모서리가 깎인 각진 테두리. 레이아웃 공간을 차지하지 않으므로 바깥 여백을 둔다. */
+.frame {
+  margin: 3px;
+  box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame);
+}
+.frame-sm, .tabs button, .marks button, .key, .chip, .badge, .stage-tabs [role="tab"], .to-tab {
+  --c: var(--frame-dim);
+  box-shadow: 0 -2px 0 0 var(--c), 0 2px 0 0 var(--c), -2px 0 0 0 var(--c), 2px 0 0 0 var(--c);
+}
+
+/* 포커스: 픽셀 테두리 바깥에, 선택 표시(주황)와 다른 색으로 */
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 5px; }
+
+mark {
+  background: none;
+  color: inherit;
+  text-decoration: underline 2px var(--acc);
+  text-underline-offset: 4px;
+}
+
+kbd {
+  padding: 0 4px;
+  background: #2a1748;
+  color: #efe6ff;
+  font: inherit;
+}
+
+/* ── 머리 띠 ── */
+.site-head { padding: 0 20px; }
+.bar { display: flex; align-items: center; gap: 16px; padding: 16px 0 12px; }
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  color: var(--bone);
+  font-family: var(--f11);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  text-shadow: 2px 2px 0 #000;
+  white-space: nowrap;
+}
+
+/* 횃불: 3px 한 칸짜리 픽셀 그림(불꽃 7칸, 손잡이 3칸) */
+.torch { position: relative; flex: none; width: 9px; height: 18px; }
+.torch::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0;
+  width: 3px; height: 3px;
+  box-shadow: 3px 0 #ffd36b, 0 3px #ff8a3c, 3px 3px #ffe9a8, 6px 3px #ff8a3c, 0 6px #ff5a2a, 3px 6px #ffb347, 6px 6px #ff5a2a, 3px 9px #7a5330, 3px 12px #5c3d22, 3px 15px #3f2915;
+  filter: drop-shadow(0 0 5px rgba(255, 140, 60, .9));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .torch::before { animation: flick .6s steps(2) infinite; }
+}
+@keyframes flick {
+  50% { filter: drop-shadow(0 0 8px rgba(255, 160, 70, .95)); transform: translateY(-1px); }
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: var(--field);
+}
+.search:focus-within { --frame: var(--acc); }
+.search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  caret-color: var(--acc);
+  font-family: var(--f11);
+  font-size: 14px;
+}
+.search input::placeholder { color: #a693c8; }
+.search input:focus-visible { outline: none; }
+.search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+.key { flex: none; margin: 0 2px; padding: 0 6px; background: #2a1748; color: var(--muted); font-family: var(--f11); font-size: 11px; }
+
+/* ── 탭 ── */
+.tabbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 4px 0 14px; padding: 0 3px; }
+.tabs, .marks { display: flex; flex-wrap: wrap; gap: 10px; }
+.marks[hidden] { display: none; }
+.tabs button, .marks button {
+  min-height: 32px;
+  padding: 0 12px;
+  margin: 2px;
+  border: 0;
+  background: var(--panel);
+  color: var(--muted);
+  font-family: var(--f11);
+  font-size: 11px;
+  cursor: pointer;
+}
+.tabs button .n { margin-left: 6px; color: #8f7bb0; }
+.tabs button[aria-pressed="true"], .marks button[aria-pressed="true"] {
+  --c: var(--bone);
+  background: var(--bone);
+  color: #1b1308;
+  font-weight: 700;
+}
+.tabs button[aria-pressed="true"] .n { color: #6a5a3a; font-weight: 400; }
+.tabs button.zero { opacity: .55; }
+.tabs button:hover:not([aria-pressed="true"]), .marks button:hover:not([aria-pressed="true"]) { color: var(--text); }
+
+/* ── 바닥 띠 ── */
+footer.site {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 10px 20px;
+  background: rgba(8, 3, 16, .75);
+  border-top: 3px solid #0d0716;
+  color: #b9a8d6;
+  font-family: var(--f11);
+  font-size: 11px;
+  line-height: 1.6;
+}
+footer.site details { display: inline; }
+footer.site summary { cursor: pointer; }
+footer.site summary #namu-count, .detail-foot summary span { text-decoration: underline; text-underline-offset: 3px; color: #e4d5ff; }
+footer.site details[open] { display: block; flex-basis: 100%; }
+footer.site ul { margin: 6px 0; padding-left: 18px; }
+footer.site details p { margin: 0 0 4px; }

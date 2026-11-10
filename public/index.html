@@ -4,37 +4,41 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Skul: The Hero Slayer 정리</title>
-  <meta name="description" content="Skul: The Hero Slayer 비공식 팬 정리: 스컬별 추천 스킬과 아이템·각인 도감">
+  <meta name="description" content="Skul: The Hero Slayer 비공식 팬 정리: 스컬 45종 추천 스킬, 아이템 258종과 각인 36종을 한 화면에서 검색">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/home.css">
+  <link rel="preload" href="fonts/Galmuri14.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Galmuri11.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
 </head>
 <body>
-  <nav class="site-nav" aria-label="사이트">
-    <a href="./" aria-current="page">홈</a>
-    <a href="skills/">스킬 추천</a>
-    <a href="items/">아이템·각인</a>
-  </nav>
-
-  <header class="site">
-    <h1>Skul: The Hero Slayer 정리</h1>
-    <p class="headline">비공식 팬 정리 페이지</p>
+  <header class="site-head">
+    <div class="bar">
+      <h1 class="title"><span class="torch" aria-hidden="true"></span>Skul 정리<span class="torch" aria-hidden="true"></span></h1>
+      <label class="search frame"><span class="sr-only">검색</span>
+        <input id="q" type="search" placeholder="스컬·아이템·각인 이름이나 효과 검색" autocomplete="off" spellcheck="false">
+        <kbd class="key" aria-hidden="true">/</kbd></label>
+    </div>
+    <div class="tabbar">
+      <div class="tabs" role="group" aria-label="보기"></div>
+      <div class="marks" role="group" aria-label="스컬 거르기" hidden>
+        <button type="button" data-mark="★" aria-pressed="false">★ 신화 DLC</button>
+        <button type="button" data-mark="◆" aria-pressed="false">◆ 마석 해금</button></div>
+    </div>
+    <p id="status" class="sr-only" aria-live="polite"></p>
   </header>
-
-  <main>
-    <ul class="hub">
-      <li><a class="hub-card" href="skills/"><h2>스컬별 스킬 추천</h2><p>스컬별 추천 스킬 조합과 각성 단계별 스킬 정보</p></a></li>
-      <li><a class="hub-card" href="items/"><h2>아이템 · 각인 도감</h2><p>아이템 효과와 각인 단계별 효과, 각인으로 아이템 찾기</p></a></li>
-    </ul>
+  <main class="split">
+    <section id="results-pane" class="pane frame" aria-label="검색 결과"><div id="results"></div></section>
+    <section id="detail-pane" class="pane frame" aria-label="상세">
+      <button type="button" class="back">◀ 목록</button><div id="detail"></div><div class="detail-foot"></div></section>
   </main>
-
   <footer class="site">
-    <p>비공식 팬 정리 페이지입니다. 내용 출처는 위 원문이며, Skul: The Hero Slayer 관련 권리는 SouthPAW Games에 있습니다.</p>
-    <p>스킬 추천: <a href="https://gall.dcinside.com/mgallery/board/view/?id=skul&amp;no=57295" target="_blank" rel="noopener">디시 스컬 갤러리 「스컬별 스킬 추천」 · 정도</a></p>
-    <p>스킬 정보: <a href="https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%8A%A4%EC%BB%AC" target="_blank" rel="noopener">나무위키 「Skul: The Hero Slayer/스컬」</a> (나무위키 기여자, <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a>, 2026-11-08 기준).</p>
-    <p>아이템·각인 정보: 나무위키 <a href="https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8" target="_blank" rel="noopener">「아이템과 각인」</a>, <a href="https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%EB%A0%88%EC%96%B4%20%EC%95%84%EC%9D%B4%ED%85%9C" target="_blank" rel="noopener">「아이템과 각인/레어 아이템」</a>, <a href="https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%EC%9C%A0%EB%8B%88%ED%81%AC%20%EC%95%84%EC%9D%B4%ED%85%9C" target="_blank" rel="noopener">「아이템과 각인/유니크 아이템」</a>, <a href="https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%EB%A0%88%EC%A0%84%EB%8D%94%EB%A6%AC%20%EC%95%84%EC%9D%B4%ED%85%9C" target="_blank" rel="noopener">「아이템과 각인/레전더리 아이템」</a>, <a href="https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%ED%9D%89%EC%A1%B0%20%EC%95%84%EC%9D%B4%ED%85%9C" target="_blank" rel="noopener">「아이템과 각인/흉조 아이템」</a>, <a href="https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/DLC%20%EC%95%84%EC%9D%B4%ED%85%9C" target="_blank" rel="noopener">「아이템과 각인/DLC 아이템」</a> (나무위키 기여자, <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a>, 2026-11-10 기준).</p>
+    <span>비공식 팬 정리 · Skul: The Hero Slayer 관련 권리는 SouthPAW Games</span>
+    <span>스킬 추천: <a href="https://gall.dcinside.com/mgallery/board/view/?id=skul&amp;no=57295" target="_blank" rel="noopener">디시 스컬 갤러리 「스컬별 스킬 추천」 · 정도</a></span>
+    <details class="namu"><summary>스킬·아이템·각인: <span id="namu-count"></span></summary><ul id="namu-sources"></ul>
+      <p>글꼴: <a href="fonts/OFL.txt">갈무리</a> (SIL Open Font License 1.1)</p></details>
+    <span>나무위키 기여자 · <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a></span>
   </footer>
-
-  <script type="module">import { legacySkillRedirect } from './js/legacy-redirect.js'; const to = legacySkillRedirect(location.hash); if (to) location.replace(to);</script>
 </body>
 </html>
