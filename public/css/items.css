@@ -1,95 +1,232 @@
-/* 아이템·각인 도감(/items/) 전용 스타일. 공통 토큰과 컴포넌트는 style.css */
+/* 아이템·각인 도감(/items/) 전용 스타일 제안. public/css/items.css 시안. 공통 토큰과 컴포넌트는 style.css */
 
+/* 흉조 등급 색. 대비: 라이트 배경 5.36 · 배지 4.58, 다크 배경 7.36 · 배지 4.94 */
 :root { --omen: #b23a48; }
-@media (prefers-color-scheme: dark) {
-  :root { --omen: #f08791; }
-}
-.grade-omen { --g: var(--omen); }
-.eng-section, .card.engraving { --g: var(--accent); }
+@media (prefers-color-scheme: dark) { :root { --omen: #f08791; } }
+.grade-omen { --g: var(--omen); --g-text: var(--omen); }
 
-.item-filters[hidden] { display: none; }
+/* ── 툴바 ───────────────────────────────────────────────
+ * 넓은 화면:  [아이템|각인] [검색……………………] 258개 아이템
+ *             [전체 일반 레어 유니크 레전더리 흉조]  [각인: 전체 ▾]
+ * 좁은 화면(≤640px): 보기 / 검색 / 등급 / 각인 네 줄, 높이가 커지므로 sticky 해제 */
+nav.controls:has(.views) { flex-flow: row wrap; align-items: center; column-gap: 12px; }
+/* min-width:0 이 없으면 가로 flex 안의 줄이 등급 탭 전체 폭(약 530px)까지 늘어나 360px에서 가로 스크롤이 생긴다 */
+nav.controls:has(.views) > .row { flex: 1 1 100%; min-width: 0; }
+nav.controls:has(.views) > .row:has(> .views) { order: -1; flex: none; }
+nav.controls:has(.views) > .row.search { flex: 1 1 280px; }
+.row[hidden] { display: none; }
+
+/* 보기 전환은 필터가 아니라 화면 모드라서, 등급 탭과 다른 세그먼트 모양으로 */
+.tabs.views {
+  flex: none;
+  gap: 0;
+  padding: 3px;
+  overflow: visible;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--badge-bg);
+}
+.tabs.views button {
+  min-width: 72px;
+  padding: 5px 16px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--muted);
+  font-weight: 600;
+}
+.tabs.views button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgb(0 0 0 / .18);
+}
+
+.item-filters { column-gap: 12px; }
 #eng {
-  font: inherit;
+  flex: none;
   max-width: 100%;
-  padding: 6px 10px;
+  min-height: 34px;
+  padding: 5px 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface);
   color: var(--text);
-}
-
-/* 각인 칩 */
-.engravings { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; }
-.chip.eng {
   font: inherit;
-  font-size: .78rem;
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
+  font-size: .9rem;
 }
-.chip.eng:hover { border-color: var(--accent); color: var(--accent); }
-.chip.random { border-style: dashed; color: var(--muted); }
+/* 각인을 고른 상태면 테두리·굵기로 표시 (값이 빈 첫 옵션이 아닐 때) */
+#eng:has(option:checked:not([value=""])) {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  font-weight: 700;
+}
 
-/* 배지 */
+@media (max-width: 640px) {
+  nav.controls:has(.views) { position: static; }
+  nav.controls:has(.views) ~ main .grade-heading { top: 0; }
+  nav.controls:has(.views) > .row:has(> .views) { flex: 1 1 100%; }
+  .tabs.views { flex: 1 1 auto; }
+  .tabs.views button { flex: 1 1 0; }
+  /* 360px에서는 6개 중 4개만 보여 레전더리·흉조가 숨는다. 툴바가 sticky가 아니므로 가로 스크롤 대신 두 줄로 */
+  .tabs.grades { flex-wrap: wrap; overflow: visible; }
+  #eng { flex: 1 1 100%; }
+}
+
+/* ── 공통 카드 머리 ───────────────────────────────────── */
+.card.item header, .card.engraving header { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.card.item h3, .card.engraving h3 { flex: 1 1 9em; min-width: 0; margin: 0; font-size: 1.05rem; line-height: 1.35; }
+/* 이름 검색 일치: 제목은 테두리 대신 밑줄 */
+.card h3.hit { outline: none; text-decoration: underline 2px var(--hit); text-underline-offset: 4px; }
+
 .badge {
-  padding: 0 8px;
-  border-radius: 999px;
+  display: inline-block;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 4px;
   background: var(--badge-bg);
   color: var(--muted);
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 600;
-  line-height: 1.7;
+  line-height: 1.6;
   white-space: nowrap;
 }
-.badge.dlc { background: color-mix(in srgb, var(--hit) 16%, transparent); color: var(--hit); }
+.badge.dlc { border-color: currentColor; background: none; color: var(--accent); letter-spacing: .04em; }
 .badge.mod { background: var(--rec-bg); color: var(--rec-text); }
-.badge.nomod { background: transparent; border: 1px dashed var(--border); }
+.badge.nomod { border: 1px dashed var(--border); background: none; }
 
-/* 아이템 카드 */
-.card.item h3.hit, .card.engraving h3.hit { outline-offset: 2px; }
-.desc { margin: 0; line-height: 1.55; font-size: .92rem; }
-.variant-of, .variants { margin: 0; color: var(--muted); font-size: .85rem; }
+/* ── 아이템 카드 ─────────────────────────────────────── */
+.engravings { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.chip.eng, .chip.random {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: .82rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+/* 누를 수 있는 각인: 실선 테두리, 본문색, 굵게 */
+.chip.eng {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+.chip.eng:hover { border-color: var(--accent); background: var(--badge-bg); }
+@media (prefers-reduced-motion: no-preference) {
+  .chip.eng { transition: border-color .15s, background-color .15s; }
+}
+/* 랜덤 각인: 점선 테두리, 흐린 글자, 커서 변화 없음 → 버튼이 아님을 모양으로 구분 */
+.chip.random {
+  border: 1px dashed var(--muted);
+  background: none;
+  color: var(--muted);
+  cursor: default;
+}
+
+.desc { margin: 0; font-size: .92rem; line-height: 1.55; }
+
+.variant-of, .variants { margin: 0; color: var(--muted); font-size: .82rem; }
+.variant-of::before { content: "↳ "; }
 .link {
+  min-height: 24px;
   padding: 0;
   border: 0;
   background: none;
   color: var(--accent);
   font: inherit;
+  font-weight: 600;
   text-decoration: underline;
+  text-underline-offset: 2px;
   cursor: pointer;
 }
+.link:hover { text-decoration-thickness: 2px; }
 
-/* 각인 카드 */
+/* ── 각인 카드 ───────────────────────────────────────── */
 .tiers-scroll { overflow-x: auto; }
-.tiers { width: 100%; border-collapse: collapse; font-size: .9rem; }
-.tiers th, .tiers td { padding: 4px 6px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-.tiers th { color: var(--muted); font-weight: 500; white-space: nowrap; }
+.tiers { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.tiers th, .tiers td { padding: 5px 6px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.tiers th { color: var(--muted); font-size: .78rem; font-weight: 500; white-space: nowrap; }
 .tiers td:first-child, .tiers td:nth-child(2) { white-space: nowrap; }
+.tiers td:first-child { font-weight: 700; font-variant-numeric: tabular-nums; }
+/* 개조 행: 배경 + "개조" 글자 굵게 (색만으로 구분하지 않음) */
 .tiers tr.mod td { background: var(--rec-row); }
-.note { color: var(--muted); font-size: .8rem; }
-.no-items { margin: 0; color: var(--muted); font-size: .85rem; }
-.show-items, .clear-eng {
+.tiers tr.mod td:nth-child(2) { color: var(--rec-text); font-weight: 700; }
+.note { display: inline-block; margin-top: 2px; color: var(--muted); font-size: .78rem; }
+
+.show-items {
   align-self: flex-start;
-  font: inherit;
-  font-size: .85rem;
+  margin-top: auto;
   padding: 4px 12px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 6px;
   background: var(--surface);
   color: var(--accent);
+  font: inherit;
+  font-size: .85rem;
   cursor: pointer;
 }
-.show-items:hover, .clear-eng:hover { border-color: var(--accent); }
-
-/* 선택한 각인 요약 */
-.eng-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 12px 0 4px;
-  padding: 10px;
-  border: 2px solid var(--accent);
-  border-radius: 12px;
+.show-items::after { content: " →"; }
+.show-items:hover { border-color: var(--accent); }
+.no-items {
+  margin: auto 0 0;
+  padding: 6px 10px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: .85rem;
 }
 
-footer.site .sources { margin: 0 0 8px; padding-left: 18px; }
+/* 각인은 등급이 없다. --g 가 비면 .card 의 왼쪽 굵은 테두리가 사라지므로 중립색을 준다. */
+.card.engraving { --g: var(--muted); }
+/* 각인 목록에서는 섹션 헤딩이 이미 분류를 말하므로 카드의 분류 배지를 숨긴다(요약 패널에서는 보임) */
+.eng-section .card.engraving header .badge:not(.mod, .nomod) { display: none; }
+/* 각인 분류 섹션 헤딩: 등급색 대신 본문색 + 네모 표식 */
+.eng-section .grade-heading { color: var(--text); }
+.eng-section .grade-heading::before { border-radius: 2px; background: var(--muted); }
+
+/* ── 선택한 각인 요약 패널 ───────────────────────────── */
+.eng-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 6px 16px;
+  margin: 16px 0 4px;
+  padding: 12px 16px 14px;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.eng-summary::before {
+  content: "선택한 각인으로 거르는 중";
+  grid-column: 1 / -1;
+  color: var(--accent);
+  font-size: .75rem;
+  font-weight: 700;
+}
+.eng-summary .card { max-width: 760px; padding: 0; border: 0; background: none; }
+.eng-summary .clear-eng {
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--badge-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.eng-summary .clear-eng::before { content: "× "; }
+.eng-summary .clear-eng:hover { border-color: var(--accent); }
+@media (max-width: 640px) {
+  .eng-summary { grid-template-columns: minmax(0, 1fr); }
+  .eng-summary .clear-eng { grid-column: 1; grid-row: auto; justify-self: start; }
+}
