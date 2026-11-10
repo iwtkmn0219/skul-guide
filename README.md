@@ -1,6 +1,12 @@
-# 스컬별 스킬 추천
+# Skul: The Hero Slayer 정리
 
-스컬: 더 히어로 슬레이어(Skul: The Hero Slayer)의 스컬 45종 추천 스킬 조합을 등급 탭·원문 표기(★/◆)·검색으로 볼 수 있게 정리한 정적 페이지입니다.
+스컬: 더 히어로 슬레이어(Skul: The Hero Slayer) 비공식 팬 정리 사이트입니다. 세 페이지로 되어 있습니다.
+
+- `/`: 허브(메인 홈페이지). 두 페이지로 가는 카드와 출처 요약.
+- `/skills/`: 스컬별 스킬 추천.
+- `/items/`: 아이템·각인 도감. 아이템 258종과 각인 36종을 등급·각인·검색어로 찾고, 각인 단계별 효과를 봅니다(예: `/items/#grade=legendary&eng=보물`).
+
+스킬 추천 페이지는 스컬 45종 추천 스킬 조합을 등급 탭·원문 표기(★/◆)·검색으로 볼 수 있게 정리한 정적 페이지입니다.
 카드마다 그 스컬의 스킬 전체(나무위키)를 칩으로 보여 주고 추천 스킬은 ★로 강조하며, `스킬 정보`를 펼치면 각성 단계별 패시브·교대·쿨타임·효과를 볼 수 있습니다.
 
 - 원문: [디시인사이드 스컬 마이너 갤러리 「스컬별 스킬 추천」](https://gall.dcinside.com/mgallery/board/view/?id=skul&no=57295)
@@ -37,6 +43,11 @@ npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라�
 | `public/skills/index.html` | 스킬 추천 페이지 |
 | `public/js/common.js` | 페이지 공용 함수(`escapeHtml`, `normalize`) |
 | `public/js/legacy-redirect.js` | 옛 루트 해시 → `/skills/` 주소 계산 |
+| `public/items/index.html`, `public/css/items.css` | 아이템·각인 도감 페이지 |
+| `public/js/items.js` | 엑셀에서 생성한 도감 데이터(`ITEMS_META`, `ITEM_GRADES`, `ENGRAVING_CATEGORIES`, `ITEMS`, `ENGRAVINGS`) — 손으로 고치지 않음 |
+| `public/js/item-filter.js`, `item-state.js`, `item-render.js`, `item-page.js` | 도감 검색·필터, 해시 상태, 카드 HTML, DOM 연결 |
+| `data/Skul_아이템_각인_DB형.xlsx` | 도감 원본 엑셀(커밋함, 배포 안 됨) |
+| `tools/convert_items.py` | 엑셀 → `items.js` 변환기(검증 포함, 개발용) |
 | `public/js/data.js` | 원문 전사 데이터(`GRADES`, `SOURCE`, `SKULLS`) |
 | `public/js/filter.js` | 검색 정규화, 필터링 |
 | `public/js/state.js` | URL 해시 ↔ 필터 상태 |
@@ -80,13 +91,32 @@ npm run test:tools   # 나무위키 추출기 테스트(Python 3.12, 표준 라�
 3. `npm test && npm run test:tools`로 확인합니다. 테스트가 실패하면 `skills.js`를 손으로 고치지 말고 추출 규칙을 고친 뒤 다시 생성합니다.
 4. 날짜를 바꿨다면 아래 출처 절의 기준일도 같이 고칩니다.
 
+## 아이템 데이터 갱신 (엑셀)
+
+엑셀 `data/Skul_아이템_각인_DB형.xlsx`이 유일한 원본입니다. `public/js/items.js`는 손으로 고치지 않습니다.
+
+1. 엑셀을 고칩니다. 시트와 열은 이름으로 찾으므로 열 순서를 바꾸거나 열을 추가해도 됩니다.
+2. `npm run build:items`로 다시 생성합니다. 오류가 있으면 시트 이름과 행 번호가 출력되고 `items.js`는 바뀌지 않습니다.
+3. `npm test`로 확인합니다. 아이템 수 등이 의도적으로 바뀌었다면 `tests/items.test.js`의 스냅샷 테스트 값을 같은 커밋에서 갱신합니다.
+4. 커밋합니다.
+
+정리 기준일을 바꿀 때는 `package.json`의 `build:items` 스크립트에 있는 `--retrieved` 값도 바꿉니다.
+
 ## 출처와 라이선스
 
 - 추천 스킬 내용: [디시인사이드 스컬 마이너 갤러리 「스컬별 스킬 추천」](https://gall.dcinside.com/mgallery/board/view/?id=skul&no=57295), 작성자 정도.
 - 스킬 정보(`public/js/skills.js`): [나무위키 「Skul: The Hero Slayer/스컬」](https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%8A%A4%EC%BB%AC), 나무위키 기여자, 2026-11-08 기준.
   이 파일은 원문과 같은 [CC BY-NC-SA 2.0 KR](https://creativecommons.org/licenses/by-nc-sa/2.0/kr/) 라이선스를 따릅니다(저작자 표시, 비영리, 동일조건 변경허락).
   따라서 사이트에는 광고 등 상업 요소를 넣지 않습니다.
-- 그 밖의 코드(`public/js/skills.js` 제외)는 위 라이선스와 별개입니다.
+- 아이템·각인 정보(`public/js/items.js`, 원본 `data/Skul_아이템_각인_DB형.xlsx`): 나무위키 다음 문서 6개, 나무위키 기여자, 2026-11-10 기준.
+  - [「Skul: The Hero Slayer/아이템과 각인」](https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8)
+  - [「Skul: The Hero Slayer/아이템과 각인/레어 아이템」](https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%EB%A0%88%EC%96%B4%20%EC%95%84%EC%9D%B4%ED%85%9C)
+  - [「Skul: The Hero Slayer/아이템과 각인/유니크 아이템」](https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%EC%9C%A0%EB%8B%88%ED%81%AC%20%EC%95%84%EC%9D%B4%ED%85%9C)
+  - [「Skul: The Hero Slayer/아이템과 각인/레전더리 아이템」](https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%EB%A0%88%EC%A0%84%EB%8D%94%EB%A6%AC%20%EC%95%84%EC%9D%B4%ED%85%9C)
+  - [「Skul: The Hero Slayer/아이템과 각인/흉조 아이템」](https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/%ED%9D%89%EC%A1%B0%20%EC%95%84%EC%9D%B4%ED%85%9C)
+  - [「Skul: The Hero Slayer/아이템과 각인/DLC 아이템」](https://namu.wiki/w/Skul:%20The%20Hero%20Slayer/%EC%95%84%EC%9D%B4%ED%85%9C%EA%B3%BC%20%EA%B0%81%EC%9D%B8/DLC%20%EC%95%84%EC%9D%B4%ED%85%9C)
+  이 파일도 [CC BY-NC-SA 2.0 KR](https://creativecommons.org/licenses/by-nc-sa/2.0/kr/) 라이선스를 따릅니다.
+- 그 밖의 코드(`public/js/skills.js`, `public/js/items.js` 제외)는 위 라이선스와 별개입니다.
 - 게임 관련 권리는 SouthPAW Games에 있습니다.
 
 ## 배포 (Cloudflare Pages 무료 플랜)

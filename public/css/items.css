@@ -1,0 +1,95 @@
+/* 아이템·각인 도감(/items/) 전용 스타일. 공통 토큰과 컴포넌트는 style.css */
+
+:root { --omen: #b23a48; }
+@media (prefers-color-scheme: dark) {
+  :root { --omen: #f08791; }
+}
+.grade-omen { --g: var(--omen); }
+.eng-section, .card.engraving { --g: var(--accent); }
+
+.item-filters[hidden] { display: none; }
+#eng {
+  font: inherit;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* 각인 칩 */
+.engravings { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; }
+.chip.eng {
+  font: inherit;
+  font-size: .78rem;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.chip.eng:hover { border-color: var(--accent); color: var(--accent); }
+.chip.random { border-style: dashed; color: var(--muted); }
+
+/* 배지 */
+.badge {
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--badge-bg);
+  color: var(--muted);
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+.badge.dlc { background: color-mix(in srgb, var(--hit) 16%, transparent); color: var(--hit); }
+.badge.mod { background: var(--rec-bg); color: var(--rec-text); }
+.badge.nomod { background: transparent; border: 1px dashed var(--border); }
+
+/* 아이템 카드 */
+.card.item h3.hit, .card.engraving h3.hit { outline-offset: 2px; }
+.desc { margin: 0; line-height: 1.55; font-size: .92rem; }
+.variant-of, .variants { margin: 0; color: var(--muted); font-size: .85rem; }
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* 각인 카드 */
+.tiers-scroll { overflow-x: auto; }
+.tiers { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.tiers th, .tiers td { padding: 4px 6px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.tiers th { color: var(--muted); font-weight: 500; white-space: nowrap; }
+.tiers td:first-child, .tiers td:nth-child(2) { white-space: nowrap; }
+.tiers tr.mod td { background: var(--rec-row); }
+.note { color: var(--muted); font-size: .8rem; }
+.no-items { margin: 0; color: var(--muted); font-size: .85rem; }
+.show-items, .clear-eng {
+  align-self: flex-start;
+  font: inherit;
+  font-size: .85rem;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--accent);
+  cursor: pointer;
+}
+.show-items:hover, .clear-eng:hover { border-color: var(--accent); }
+
+/* 선택한 각인 요약 */
+.eng-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 4px;
+  padding: 10px;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+}
+
+footer.site .sources { margin: 0 0 8px; padding-left: 18px; }
