@@ -231,3 +231,14 @@ footer.site summary #namu-count, .detail-foot summary span { text-decoration: un
 footer.site details[open] { display: block; flex-basis: 100%; }
 footer.site ul { margin: 6px 0; padding-left: 18px; }
 footer.site details p { margin: 0 0 4px; }
+
+/* ── 휴대폰(760px 이하): 머리 띠는 고정하지 않는다. 검색창은 다음 줄에서 전체 폭. ── */
+@media (max-width: 760px) {
+  .site-head { padding: 0 12px; }
+  .bar { flex-wrap: wrap; gap: 10px; padding: 12px 0 8px; }
+  .title { font-size: 16px; }
+  .search { flex-basis: calc(100% - 6px); }
+  .tabbar { margin-bottom: 10px; }
+  .tabs, .marks { gap: 6px; }
+  footer.site { padding: 10px 12px; }
+}

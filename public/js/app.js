@@ -39,11 +39,58 @@ function entryEl(key) {
   return [...resultsEl.querySelectorAll('.entry')].find(el => el.dataset.key === key) ?? null;
 }
 
-function writeHistory(push = false) {
-  const url = toAppHash(state) || location.pathname + location.search;
-  if (push) history.pushState(null, '', url);
-  else history.replaceState(history.state, '', url);
+const hashUrl = () => toAppHash(state) || location.pathname + location.search;
+
+/** push면 한 칸 쌓는다(pushState의 상태는 pushedState). 아니면 지금 칸을 바꾼다. */
+function writeHistory(push = false, pushedState = null) {
+  if (push) history.pushState(pushedState, '', hashUrl());
+  else history.replaceState(history.state, '', hashUrl());
   historyToken = tokenNow();
+}
+
+// ── 휴대폰 상세 덮개 ──
+const detailDepth = () => (Number.isInteger(history.state?.detail) ? history.state.detail : 0);
+const phoneOverlay = () => !desktop.matches && document.body.classList.contains('detail-open');
+
+/** 휴대폰에서 상세가 덮고 있을 때만 뒤쪽 화면을 inert로 둔다. */
+function syncOverlay() {
+  const on = phoneOverlay();
+  for (const el of [$('.site-head'), resultsPane, $('body > footer.site')]) el.inert = on;
+}
+
+function setDetailOpen(open) {
+  document.body.classList.toggle('detail-open', open);
+  syncOverlay();
+}
+
+/** 휴대폰: 항목을 고르고 상세를 연다. 뒤로 가기로 목록에 돌아오도록 history를 한 칸 쌓는다. */
+function openDetail(key) {
+  state = { ...state, sel: key };
+  remembered[state.tab] = state.sel;
+  history.replaceState(null, '', hashUrl());   // 돌아왔을 때 그 줄이 골라져 있도록
+  syncSelectionMarks();
+  renderDetailPane();
+  detailPane.scrollTop = 0;
+  writeHistory(true, { detail: 1 });
+  setDetailOpen(true);
+  $('#detail-title')?.focus({ preventScroll: true });
+}
+
+/** 상세 덮개를 닫고 고른 줄로 포커스와 스크롤을 돌려놓는다. */
+function closeDetail() {
+  setDetailOpen(false);
+  const el = entryEl(state.sel);
+  if (el) {
+    el.focus({ preventScroll: true });
+    el.scrollIntoView({ block: 'center' });
+  }
+}
+
+/** "◀ 목록"과 Esc: 상세를 연 뒤 쌓은 칸만큼 한 번에 돌아간다. */
+function backToList() {
+  const depth = detailDepth();
+  if (depth > 0) history.go(-depth);
+  else closeDetail();
 }
 
 function currentResults() {
@@ -111,10 +158,10 @@ function render() {
 }
 
 /** 상태를 바꾸고 해시를 쓰고 필요한 부분을 다시 그린다. */
-function update(patch, { push = false } = {}) {
+function update(patch, { push = false, pushedState = null } = {}) {
   state = { ...state, ...patch };
   remembered[state.tab] = state.sel;
-  writeHistory(push);
+  writeHistory(push, pushedState);
   render();
 }
 
@@ -132,6 +179,10 @@ function loadFromLocation() {
   state = parseAppHash(location.hash, isKnownKey);
   remembered[state.tab] = state.sel;
   render();
+  const wasOpen = document.body.classList.contains('detail-open');
+  const open = detailDepth() >= 1;
+  if (wasOpen && !open && !desktop.matches) closeDetail();
+  else setDetailOpen(open);
 }
 
 function onHistoryChange() {
@@ -229,6 +280,11 @@ resultsEl.addEventListener('keydown', e => {
 });
 
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && phoneOverlay()) {
+    e.preventDefault();
+    backToList();
+    return;
+  }
   if (e.key === '/' && !e.ctrlKey && !e.altKey && !e.metaKey) {
     const t = e.target;
     if (t instanceof Element && (t.closest('input, textarea, select') || t.isContentEditable)) return;
@@ -259,13 +315,18 @@ resultsEl.addEventListener('click', e => {
   const toTab = e.target.closest('.to-tab');
   if (toTab) return goToTab(toTab.dataset.tab);
   const entry = e.target.closest('.entry');
-  if (entry) select(entry.dataset.key);
+  if (!entry) return;
+  if (desktop.matches) select(entry.dataset.key);
+  else openDetail(entry.dataset.key);
 });
 
 detailEl.addEventListener('click', e => {
   const jump = e.target.closest('.jump');
   if (jump) {
-    update(jumpTo(state, jump.dataset.key), { push: true });
+    // 휴대폰 상세 안에서는 쌓은 칸 수를 세어 "◀ 목록"이 한 번에 돌아가게 한다.
+    const pushed = phoneOverlay() ? { detail: detailDepth() + 1 } : null;
+    update(jumpTo(state, jump.dataset.key), { push: true, pushedState: pushed });
+    setDetailOpen(detailDepth() >= 1);
     entryEl(state.sel)?.scrollIntoView({ block: 'nearest' });
     $('#detail-title')?.focus({ preventScroll: true });
     return;
@@ -284,6 +345,9 @@ detailEl.addEventListener('keydown', e => {
   const next = { ArrowLeft: i - 1, ArrowRight: i + 1, Home: 0, End: all.length - 1 }[e.key];
   selectStage(all[(next + all.length) % all.length], true);
 });
+
+$('.back').addEventListener('click', backToList);
+desktop.addEventListener('change', syncOverlay);
 
 window.addEventListener('popstate', onHistoryChange);
 window.addEventListener('hashchange', onHistoryChange);
