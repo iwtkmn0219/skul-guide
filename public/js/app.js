@@ -4,7 +4,7 @@ import { ITEMS_META } from './items.js';
 import { escapeHtml } from './common.js';
 import { IMAGES } from './images.js';
 import { parseAppHash, toAppHash } from './app-state.js';
-import { TABS, TAB_LABELS, search, tabEntries, tabCounts, lookup, jumpTo, chooseSelection, tabSelection } from './search.js';
+import { TABS, TAB_LABELS, search, tabEntries, tabCounts, lookup, jumpTo, chooseSelection, tabSelection, selectionOnLoad } from './search.js';
 import { nextIndex } from './keynav.js';
 import { renderResults } from './view-list.js';
 import { renderDetail } from './view-detail.js';
@@ -194,10 +194,12 @@ function select(key) {
 function loadFromLocation() {
   historyToken = tokenNow();
   state = parseAppHash(location.hash, isKnownKey);
-  rememberSel();
+  rememberSel();   // 주소의 선택은 먼저 그 탭의 기억이 된다
+  // 목록이 비면 선택을 비운다(기억은 남음). 결과는 있는데 그 항목만 빠졌으면 그대로 둔다.
+  state = { ...state, sel: selectionOnLoad(tabEntries(currentResults(), state.tab, state.mark), state.sel) };
   render();
   const wasOpen = document.body.classList.contains('detail-open');
-  const open = detailDepth() >= 1;
+  const open = detailDepth() >= 1 && state.sel !== '';   // 빈 상세 덮개는 띄우지 않는다
   if (wasOpen && !open && !desktop.matches) {
     closeDetail();
   } else {
@@ -326,8 +328,16 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'Escape' && state.query) {
     e.preventDefault();
-    update({ query: '' });
-    autoSelect('query');   // 결과가 없어 비었던 선택을 기억한 항목으로 되돌린다
+    // 고를 항목을 먼저 정하고 검색어와 함께 한 번에 바꾼다. 그래야 다시 그린 뒤 포커스도 그 항목으로 간다.
+    const sel = chooseSelection({
+      entries: tabEntries(search(''), state.tab, state.mark),
+      query: '',
+      remembered: remembered[state.tab],
+      reason: 'query',
+      auto: desktop.matches,
+    });
+    update({ query: '', sel });
+    if (sel) entryEl(sel)?.scrollIntoView({ block: 'nearest' });
   }
 });
 

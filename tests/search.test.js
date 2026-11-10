@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ITEM_GRADES } from '../public/js/items.js';
 import {
-  search, tabEntries, tabCounts, autoPick, chooseSelection, lookup, itemsOfEngraving, jumpTo, tabSelection,
+  search, tabEntries, tabCounts, autoPick, chooseSelection, lookup, itemsOfEngraving, jumpTo, tabSelection, selectionOnLoad,
 } from '../public/js/search.js';
 
 const keys = entries => entries.map(e => e.key);
@@ -93,4 +93,12 @@ test('tabSelection: remembered if listed, else the first entry, else empty', () 
   const all = tabEntries(search('보물'), 'all', 'all');
   assert.equal(tabSelection(all, ''), 'item:미지의 씨앗');
   assert.equal(autoPick(all, '보물'), 'eng:보물');
+});
+
+test('selectionOnLoad clears the selection only when the list is empty', () => {
+  const items = tabEntries(search('칼레온'), 'items', 'all');
+  assert.equal(selectionOnLoad(items, 'item:칼레온 계급장'), 'item:칼레온 계급장');
+  assert.equal(selectionOnLoad(items, 'item:절대반지'), 'item:절대반지');   // 결과가 있으면 목록에 없어도 유지
+  assert.equal(selectionOnLoad([], 'item:칼레온 계급장'), '');
+  assert.equal(selectionOnLoad([], ''), '');
 });

@@ -78,6 +78,11 @@ export function autoPick(entries, query) {
   return (named ?? entries[0])?.key ?? '';
 }
 
+/** 주소로 들어올 때의 선택. entries가 비면 '', 아니면 sel 그대로(목록에 없어도). */
+export function selectionOnLoad(entries, sel) {
+  return entries.length === 0 ? '' : sel;
+}
+
 /** 탭을 고를 때 선택할 키. remembered가 entries에 있으면 그것, 아니면 첫 항목, entries가 비면 ''. */
 export function tabSelection(entries, remembered) {
   if (remembered && entries.some(e => e.key === remembered)) return remembered;
