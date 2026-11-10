@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ITEM_GRADES } from '../public/js/items.js';
 import {
-  search, tabEntries, tabCounts, autoPick, chooseSelection, lookup, itemsOfEngraving, jumpTo,
+  search, tabEntries, tabCounts, autoPick, chooseSelection, lookup, itemsOfEngraving, jumpTo, tabSelection,
 } from '../public/js/search.js';
 
 const keys = entries => entries.map(e => e.key);
@@ -78,4 +78,16 @@ test('jumpTo keeps the query only when the target is still a result', () => {
   const a = { ...s, tab: 'all', mark: '★' };
   assert.deepEqual(jumpTo(a, 'item:보급형 칼레온 검'), { tab: 'all', query: '칼레온', mark: '★', sel: 'item:보급형 칼레온 검' });
   assert.deepEqual(jumpTo(a, 'item:절대반지'), { tab: 'all', query: '', mark: '★', sel: 'item:절대반지' });
+});
+
+test('tabSelection: remembered if listed, else the first entry, else empty', () => {
+  const items = tabEntries(search('칼레온'), 'items', 'all');
+  assert.equal(tabSelection(items, 'item:칼레온 계급장'), 'item:칼레온 계급장');
+  assert.equal(tabSelection(items, 'item:절대반지'), 'item:보급형 칼레온 갑옷');   // 기억이 목록에 없음
+  assert.equal(tabSelection(items, ''), 'item:보급형 칼레온 갑옷');
+  assert.equal(tabSelection([], 'item:칼레온 계급장'), '');
+  // 검색어가 있어도 이름 일치(autoPick)가 아니라 맨 첫 항목
+  const all = tabEntries(search('보물'), 'all', 'all');
+  assert.equal(tabSelection(all, ''), 'item:미지의 씨앗');
+  assert.equal(autoPick(all, '보물'), 'eng:보물');
 });

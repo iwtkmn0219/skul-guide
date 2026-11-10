@@ -4,7 +4,7 @@ import { ITEMS_META } from './items.js';
 import { escapeHtml } from './common.js';
 import { IMAGES } from './images.js';
 import { parseAppHash, toAppHash } from './app-state.js';
-import { TABS, TAB_LABELS, search, tabEntries, tabCounts, lookup, jumpTo, chooseSelection } from './search.js';
+import { TABS, TAB_LABELS, search, tabEntries, tabCounts, lookup, jumpTo, chooseSelection, tabSelection } from './search.js';
 import { nextIndex } from './keynav.js';
 import { renderResults } from './view-list.js';
 import { renderDetail } from './view-detail.js';
@@ -29,6 +29,8 @@ const desktop = matchMedia('(width > 760px)');
 let state = parseAppHash('', isKnownKey);
 /** 탭별 마지막 선택 */
 const remembered = { all: '', skulls: '', items: '', engravings: '' };
+/** 지금 탭의 기억을 갱신한다. 빈 선택은 기억을 지우지 않는다(결과가 다시 생기면 그 항목으로 돌아가게). */
+const rememberSel = () => { if (state.sel) remembered[state.tab] = state.sel; };
 
 let results = search('');
 let resultsQuery = '';
@@ -71,7 +73,7 @@ function setDetailOpen(open) {
 /** 휴대폰: 항목을 고르고 상세를 연다. 뒤로 가기로 목록에 돌아오도록 history를 한 칸 쌓는다. */
 function openDetail(key) {
   state = { ...state, sel: key };
-  remembered[state.tab] = state.sel;
+  rememberSel();
   syncSelectionMarks();
   renderDetailPane();
   detailPane.scrollTop = 0;
@@ -175,7 +177,7 @@ function render() {
 /** 상태를 바꾸고 해시를 쓰고 필요한 부분을 다시 그린다. */
 function update(patch, { push = false, pushedState = null } = {}) {
   state = { ...state, ...patch };
-  remembered[state.tab] = state.sel;
+  rememberSel();
   render();   // 화면을 먼저 그리고 주소를 쓴다
   writeHistory(push, pushedState);
 }
@@ -183,7 +185,7 @@ function update(patch, { push = false, pushedState = null } = {}) {
 /** 선택만 바꾼다. 목록은 다시 그리지 않는다. */
 function select(key) {
   state = { ...state, sel: key };
-  remembered[state.tab] = state.sel;
+  rememberSel();
   syncSelectionMarks();
   renderDetailPane();
   writeHistory(false);
@@ -192,7 +194,7 @@ function select(key) {
 function loadFromLocation() {
   historyToken = tokenNow();
   state = parseAppHash(location.hash, isKnownKey);
-  remembered[state.tab] = state.sel;
+  rememberSel();
   render();
   const wasOpen = document.body.classList.contains('detail-open');
   const open = detailDepth() >= 1;
@@ -224,9 +226,17 @@ function autoSelect(reason) {
   if (key) entryEl(key)?.scrollIntoView({ block: 'nearest' });
 }
 
+/** 탭을 고르면 그 탭에서 전에 고른 항목(목록에 없으면 첫 항목)을 고르고 포커스를 준다. 목록이 비면 선택을 비우고 포커스는 탭 버튼에 둔다. */
 function goToTab(tab) {
-  update({ tab, sel: remembered[tab] });
-  autoSelect('tab');
+  const key = tabSelection(tabEntries(currentResults(), tab, state.mark), remembered[tab]);
+  update({ tab, sel: key });   // 다시 그리기의 포커스 복원이 먼저 끝난다
+  if (!key) return;
+  resultsPane.scrollTop = 0;
+  const el = entryEl(key);
+  if (el) {
+    el.focus();
+    el.scrollIntoView({ block: 'nearest' });
+  }
 }
 
 /** 목록의 항목을 고르고 포커스를 준다. */

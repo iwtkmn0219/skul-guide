@@ -78,6 +78,12 @@ export function autoPick(entries, query) {
   return (named ?? entries[0])?.key ?? '';
 }
 
+/** 탭을 고를 때 선택할 키. remembered가 entries에 있으면 그것, 아니면 첫 항목, entries가 비면 ''. */
+export function tabSelection(entries, remembered) {
+  if (remembered && entries.some(e => e.key === remembered)) return remembered;
+  return entries[0]?.key ?? '';
+}
+
 /** reason: 'query'(검색어가 바뀜) | 'tab'(탭이나 ★/◆가 바뀜) */
 export function chooseSelection({ entries, query, remembered, reason, auto }) {
   const pick = auto && normalize(query) !== '' && entries.length > 0
